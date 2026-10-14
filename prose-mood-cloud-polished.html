@@ -1,0 +1,2623 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1222">
+<meta name="description" content="Since I was 10, I was writing novels. Click an emotion in the cloud, get a random passage from one of my 11 novels over 20 years.">
+<title>Prose Mood Cloud · The Playground</title>
+<style>
+:root{color-scheme:dark;--night:#0b1222;--milk:#f4ebdf;--faint:#a5b4c9;--paper:#18253b;--gold:#dfc8a7}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;min-height:100svh;background:var(--night);color:var(--milk);font-family:Georgia,'Times New Roman',serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{position:fixed;inset:0;content:"";pointer-events:none;z-index:-1;background:radial-gradient(ellipse at 24% 5%,#26304788,transparent 45%),radial-gradient(ellipse at 85% 80%,#192c3f88,transparent 60%)}
+[hidden]{display:none!important}button,a{font:inherit}button{color:inherit}a{color:inherit;text-decoration:none}
+button:focus-visible,a:focus-visible{outline:2px solid #f1d8ae;outline-offset:5px}
+.site-header{display:flex;justify-content:space-between;align-items:center;gap:18px;margin:0 auto;max-width:1510px;padding:29px clamp(22px,5vw,82px) 0;position:relative;z-index:3}
+.logo,.back,.small-label,.eyebrow,.weather-status,.below,.modal-top,.passage-meta,.modal-actions button,.fine-print{font-family:system-ui,-apple-system,'Segoe UI',sans-serif}
+.logo{font-size:11px;letter-spacing:.26em;font-weight:750;text-transform:uppercase;white-space:nowrap}
+.logo em{font-style:normal;opacity:.52;font-weight:500}
+.back{font-size:11px;letter-spacing:.1em;opacity:.69;transition:opacity .2s;white-space:nowrap}.back:hover{opacity:1}
+.intro{position:relative;z-index:2;margin:0 auto;text-align:center;max-width:800px;padding:66px 18px 3px}
+.eyebrow{font-size:10px;letter-spacing:.32em;font-weight:650;color:#b8c6d3;text-transform:uppercase}
+h1{font-size:clamp(48px,7.6vw,106px);font-weight:400;line-height:.99;letter-spacing:-.067em;margin:17px auto 20px}
+h1 em{font-style:italic;font-weight:400;letter-spacing:-.08em;color:#e0d0e5}
+.intro p{font-size:clamp(15px,1.55vw,18px);line-height:1.65;color:#bfcee1;margin:0 auto;max-width:520px}
+.weather-shell{position:relative;width:min(100%,1520px);margin:-30px auto 0}
+.weather-scene{position:relative;height:clamp(600px,64vw,810px);min-height:600px;isolation:isolate;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.weather-scene::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 63% 54% at 50% 46%,#19273b55 0%,#111d2d22 60%,transparent 100%)}
+#sky{display:block;position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 12%,#000 88%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0%,#000 12%,#000 88%,transparent 100%)}
+.grain{display:none}
+#drift-field{position:absolute;inset:0;z-index:3;pointer-events:none}
+.fog-front{position:absolute;inset:-9%;z-index:5;pointer-events:none;opacity:.42;background:radial-gradient(ellipse 17% 13% at 39% 32%,#d5bed528,transparent 94%),radial-gradient(ellipse 18% 11% at 75% 67%,#afc2e11e,transparent 100%),radial-gradient(ellipse 19% 14% at 19% 76%,#e6bfc01a,transparent 95%);filter:blur(29px);animation:fogTravel 36s ease-in-out infinite alternate}
+@keyframes fogTravel{to{transform:translate3d(2.4%,-1.5%,0) scale(1.04)}}
+.mood-word{position:absolute;left:var(--x);top:var(--y);z-index:4;transform:translate(-50%,-50%);display:inline-flex;align-items:center;justify-content:center;min-height:45px;min-width:70px;padding:8px 13px;border:0;background:transparent;color:rgba(250,246,247,var(--alpha,.85));font-family:Georgia,'Times New Roman',serif;font-size:clamp(17px,2.3vw,35px);font-style:italic;font-weight:400;letter-spacing:-.035em;white-space:nowrap;text-shadow:0 2px 26px #030b16ee,0 1px 3px #030b16;cursor:pointer;pointer-events:auto;transition:color .7s ease,text-shadow .6s ease,opacity .55s ease;filter:blur(var(--blur,0px));-webkit-tap-highlight-color:transparent}
+.mood-word .word-inner{display:inline-block;will-change:transform;pointer-events:none}.mood-word::before{content:"";position:absolute;inset:-14px -10px;z-index:-1;border-radius:50%;background:radial-gradient(ellipse at center,var(--highlight,#c9b6d2) 0%,transparent 65%);filter:blur(19px);opacity:0;transform:scale(.6);transition:opacity .7s,transform .9s}
+.mood-word:hover::before,.mood-word:focus-visible::before,.mood-word.is-preview::before{opacity:.22;transform:scale(1.6)}
+.mood-word:hover,.mood-word:focus-visible,.mood-word.is-preview{color:#fff9f4;text-shadow:0 0 28px var(--highlight,#c9b6d2),0 2px 16px #050c17}
+.mood-word.is-muted{opacity:.56}
+.mood-word.depth-far{z-index:3;font-style:normal}.mood-word.depth-far:hover,.mood-word.depth-far:focus-visible{z-index:7;filter:none}
+.mood-word.depth-front{z-index:7}
+.weather-status{position:absolute;bottom:37px;left:50%;transform:translateX(-50%);z-index:9;text-transform:uppercase;letter-spacing:.26em;font-size:9px;color:#becbd9;opacity:.75;text-align:center;white-space:nowrap;pointer-events:none}
+.weather-status span{display:inline-block;margin:0 12px;opacity:.45}
+.scene-label{position:absolute;z-index:8;top:51%;font:500 9px/1.7 system-ui,sans-serif;color:#e1e3e0a8;letter-spacing:.2em;text-transform:uppercase;writing-mode:vertical-rl;pointer-events:none}
+.scene-label.left{left:clamp(15px,4vw,65px);transform:rotate(180deg)}.scene-label.right{right:clamp(15px,4vw,65px)}
+.bottom-section{display:flex;justify-content:space-between;align-items:center;gap:30px;max-width:1230px;margin:0 auto;padding:5px 28px 75px;border-top:1px solid #f6eff018}
+.below{font-size:10px;letter-spacing:.13em;color:#acbacb;text-transform:uppercase;line-height:1.7}
+.below:last-child{text-align:right}.below strong{color:#e3d5db;font-weight:500}
+/* Reading overlay */
+.overlay{position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:26px;opacity:0;visibility:hidden;transition:opacity .55s ease,visibility .55s;overflow-y:auto;overscroll-behavior:contain}
+.overlay.open{opacity:1;visibility:visible}
+.overlay::before{content:"";position:fixed;inset:0;background:rgba(7,12,24,.74);backdrop-filter:blur(24px) saturate(.7);-webkit-backdrop-filter:blur(24px) saturate(.7)}
+.passage-card{position:relative;width:min(100%,780px);margin:auto;min-height:470px;border:1px solid #e3d5df32;border-radius:2px;overflow:hidden;box-shadow:0 40px 140px #000b,0 0 110px var(--modal-halo,#bea4b55c);background:linear-gradient(155deg,#263249f2,#151f33f5 72%);padding:clamp(29px,6vw,65px) clamp(28px,7vw,77px) 31px;transform:translateY(20px) scale(.974);transition:transform .6s cubic-bezier(.18,.8,.2,1);isolation:isolate}
+.overlay.open .passage-card{transform:translateY(0) scale(1)}
+.passage-card::before{content:"";position:absolute;inset:-35% -20% auto; height:115%;pointer-events:none;z-index:-1;background:radial-gradient(ellipse at 24% 40%,var(--modal-halo,#d4aac456),transparent 67%),radial-gradient(ellipse at 85% 12%,#ccd5ee17,transparent 55%);filter:blur(35px)}
+.modal-top{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#e0deebac;font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+.close{display:grid;place-items:center;width:38px;height:38px;background:#ffffff0a;border:1px solid #ffffff33;border-radius:50%;font:24px/1 system-ui,sans-serif;cursor:pointer;transition:background .2s,transform .2s;color:#f3e9e7}.close:hover{background:#ffffff26;transform:rotate(90deg)}
+.passage-card h2{font-size:clamp(40px,6.8vw,79px);font-weight:400;font-style:italic;letter-spacing:-.055em;line-height:1.1;margin:25px 0 32px;color:#fff0e9}
+.passage-text{font-size:clamp(19px,2.6vw,27px);line-height:1.72;letter-spacing:-.012em;color:#f2eceb;white-space:pre-wrap;min-height:115px;margin:0 0 35px;max-width:610px;overflow-wrap:anywhere}
+.passage-text.change{animation:passageAppear .47s ease both}@keyframes passageAppear{from{opacity:.15;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+.passage-meta{font-size:10px;letter-spacing:.19em;text-transform:uppercase;color:#acbacb;margin-bottom:24px}
+.modal-actions{border-top:1px solid #ffffff25;display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:24px;flex-wrap:wrap}
+.modal-actions button{background:transparent;border:1px solid #ffffff5c;padding:13px 20px;color:#f2e8df;text-transform:none;font-size:12px;letter-spacing:.05em;border-radius:2px;cursor:pointer;transition:background .25s,border-color .25s,transform .25s}
+.modal-actions button:hover{background:#fff1;border-color:#fff9;transform:translateY(-2px)}.modal-actions .secondary{border-color:transparent;color:#cfdae3;padding-inline:0}
+.modal-actions button:disabled{opacity:.4;cursor:default}
+.fine-print{font-size:10px;color:#aab5c3;letter-spacing:.07em;text-align:center;line-height:1.7;margin:20px auto 0;max-width:560px}
+@media(max-width:760px){.site-header{padding:21px 20px 0}.logo{font-size:10px;letter-spacing:.16em}.back{font-size:10px}.intro{padding:64px 20px 0}h1{font-size:clamp(50px,11vw,78px);margin:18px 0 16px}.intro p{font-size:15px;max-width:360px}.weather-shell{margin-top:-4px}.weather-scene{height:930px;min-height:930px}.mood-word{font-size:clamp(18px,5.3vw,28px);padding:11px 8px;min-height:50px}.scene-label{display:none}.weather-status{bottom:30px;font-size:9px;letter-spacing:.18em}.bottom-section{padding:8px 22px 44px}.below{font-size:9px;letter-spacing:.1em}.passage-card{min-height:420px;padding:32px 27px 29px}.overlay{padding:16px}.passage-card h2{margin:22px 0 23px}.passage-text{min-height:110px}.modal-actions button{font-size:11px}}
+@media(max-width:370px){.weather-scene{height:875px;min-height:875px}.mood-word{font-size:17px}.weather-status{letter-spacing:.08em}.below:last-child{max-width:132px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.fog-front{animation:none}.mood-word,.overlay,.passage-card,.passage-text,.mood-word::before{transition:none!important;animation:none!important}}
+
+/* v2 · Chromatic, roaming emotional weather */
+.weather-scene::before{background:radial-gradient(ellipse 70% 67% at 50% 48%,#25314780 0%,#141c3055 66%,transparent 100%)}
+#sky{-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 7%,#000 91%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0%,#000 7%,#000 91%,transparent 100%)}
+.grain{opacity:.23}
+.fog-front{opacity:.28;filter:none}
+.mood-word{color:rgba(255,251,247,var(--alpha,.91));text-shadow:0 2px 19px #050b17e0,0 1px 5px #030b16;transition:color .8s ease,text-shadow .7s ease,opacity .7s ease;}
+.mood-word::before{opacity:.15;transform:scale(1.3);filter:blur(18px);background:radial-gradient(ellipse at center,var(--highlight,#c9b6d2) 0%,transparent 69%);transition:opacity .9s ease,transform 1.2s ease}
+.mood-word:hover::before,.mood-word:focus-visible::before,.mood-word.is-preview::before{opacity:.67;transform:scale(2.05)}
+.mood-word.is-muted{opacity:.58}
+/* The entire cloud remains behind the reading window: no abrupt removal. */
+.overlay{transition:opacity .9s cubic-bezier(.22,.7,.2,1),visibility .9s}
+.overlay::before{background:rgba(8,13,26,.52);backdrop-filter:blur(9px) saturate(.88);-webkit-backdrop-filter:blur(9px) saturate(.88)}
+.passage-card{
+ --mood-a:#d7a7b0;--mood-b:#e8d1bd;--mood-c:#b8b4cb;
+ width:min(96%,980px);min-height:min(640px,87svh);max-height:90svh;
+ overflow-y:auto;overscroll-behavior:contain;
+ border:1px solid color-mix(in srgb,var(--mood-b) 68%,white 18%);
+ border-radius:45% 45% 42% 42% / 20% 20% 23% 23%;
+ box-shadow:0 25px 120px #000b,0 0 120px color-mix(in srgb,var(--mood-a) 24%,transparent);
+ background:
+ radial-gradient(ellipse 65% 55% at 11% 11%,color-mix(in srgb,var(--mood-a) 71%,transparent),transparent 98%),
+ radial-gradient(ellipse 73% 65% at 92% 78%,color-mix(in srgb,var(--mood-b) 65%,transparent),transparent 98%),
+ radial-gradient(ellipse 62% 50% at 68% 4%,color-mix(in srgb,var(--mood-c) 55%,transparent),transparent 98%),
+ radial-gradient(ellipse 66% 55% at 20% 94%,color-mix(in srgb,var(--mood-c) 47%,transparent),transparent 100%),
+ linear-gradient(150deg,#25354a,#263147 58%,#1d2b3e);
+ padding:clamp(56px,7vw,82px) clamp(55px,9vw,113px) 51px;
+ scrollbar-width:thin;scrollbar-color:#e4d9de66 transparent;
+ transform:translateY(35px) scale(.95);
+ transition:transform .95s cubic-bezier(.16,1,.25,1),background-color 1s ease;
+}
+.overlay.open .passage-card{transform:translateY(0) scale(1)}
+.passage-card::before{inset:-15% -10%;height:130%;background:radial-gradient(ellipse at 55% 45%,#101b2a70,transparent 75%),radial-gradient(ellipse at 20% 20%,var(--modal-halo,#d4aac456),transparent 67%);filter:blur(31px)}
+.passage-card::after{content:"";pointer-events:none;position:absolute;inset:5px;border-radius:inherit;border:1px solid #ffffff16;z-index:-1}
+.modal-top{max-width:720px;margin:0 auto}
+.passage-card h2{font-size:clamp(34px,5.4vw,58px);margin:10px auto 22px;text-align:center;max-width:640px;text-shadow:0 2px 18px #10172688}
+.passage-text{font-size:clamp(18px,2.08vw,23px);line-height:1.72;min-height:95px;max-width:690px;margin:0 auto 28px;text-shadow:0 1px 12px #10172680}
+.passage-meta{max-width:690px;margin:0 auto 22px;color:#f2e5e4c8}
+.modal-actions{max-width:700px;margin:0 auto;border-top-color:#ffffff40;justify-content:space-around}
+.modal-actions button{border-radius:999px;background:#111c2e42;border-color:#ffffff75;padding:14px 22px;backdrop-filter:blur(10px)}
+.modal-actions button:hover{background:#ffffff29}
+.modal-actions .secondary{padding-inline:16px}
+.fine-print{color:#f8f0ebbd;max-width:650px}
+@media(max-width:760px){
+ .overlay{padding:9px}
+ .passage-card{width:100%;min-height:570px;max-height:91svh;border-radius:40% 40% 38% 38% / 11% 11% 14% 14%;padding:67px 28px 47px}
+ .passage-card h2{font-size:clamp(34px,8vw,47px);margin:17px auto 21px}
+ .passage-text{font-size:clamp(17px,4.8vw,21px);line-height:1.65;min-height:120px}
+ .modal-actions{gap:10px;padding-top:18px}
+ .modal-actions button{padding:13px 17px}
+}
+@media(max-width:390px){.passage-card{padding-inline:25px}.modal-top{padding-inline:4px}.passage-text{font-size:17px}}
+@media(prefers-reduced-motion:reduce){.overlay,.passage-card{transition:none!important}}
+
+
+/* Long prose: the passage alone scrolls, while title and actions remain visible. */
+.passage-card{display:flex;flex-direction:column;height:min(730px,87svh);min-height:0;max-height:87svh;overflow:hidden}
+.modal-top,.passage-card h2,.passage-meta,.modal-actions,.fine-print,.read-hint{flex-shrink:0}
+.passage-copy{flex:1;min-height:105px;max-width:700px;width:100%;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#f1e8e475 transparent;margin:0 auto 14px;padding:0 8px 5px 0;touch-action:pan-y}
+.passage-copy:focus-visible{outline:1px solid #ffffff80;outline-offset:3px}
+.passage-copy .passage-text{margin:0;min-height:0;max-width:none}
+.read-hint{font:10px system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;text-align:center;color:#fff5e4cc;margin:0 auto 12px}
+.modal-top{position:relative;z-index:1;width:100%}
+.passage-meta,.modal-actions{width:100%}
+@media(max-width:760px){.passage-card{height:min(710px,89svh);max-height:89svh;min-height:0}.passage-copy{min-height:100px}.passage-meta{margin-bottom:13px}.fine-print{margin-top:10px}.passage-card h2{margin-top:10px;margin-bottom:21px}}
+
+
+/* v2.1: eliminate full-resolution repaints. The original watercolor canvas is
+   rendered only when the scene is resized, never on animation frames. */
+#sky{transform-origin:50% 50%;animation:none;will-change:auto}
+@keyframes skyFloat{from{transform:translate3d(-.35%,.30%,0) scale(1.007)}to{transform:translate3d(.35%,-.30%,0) scale(1.012)}}
+.grain{display:none}
+.fog-front{filter:none;opacity:.16;animation:none!important}
+.mood-word{left:0!important;top:0!important;will-change:transform;}
+@media(prefers-reduced-motion:reduce){#sky{animation:none!important}.mood-wash{transition:none!important}}
+
+/* Cached focus clouds are exact mood-colored watercolor textures. */
+.focus-sky{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;opacity:0;transition:opacity 1320ms ease;will-change:opacity;-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 12%,#000 88%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0%,#000 12%,#000 88%,transparent 100%)}
+@media(prefers-reduced-motion:reduce){.focus-sky{transition:none!important}}
+#sky,.focus-sky{-webkit-mask-image:none!important;mask-image:none!important}
+/* Quiet reader discoveries — intentionally smaller than the art. */
+.discovery-overall,.discovery-mood{display:flex;align-items:center;justify-content:center;gap:9px;font:500 11px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.11em;color:#d6d7de;white-space:nowrap}
+.discovery-overall{width:fit-content;margin:23px auto 0;padding:8px 17px;border:1px solid #e2e0e329;border-radius:999px;background:#17233758;box-shadow:0 3px 20px #00000016}
+.discovery-mood{margin:0 auto 21px;max-width:100%;font-size:11px;color:#fff2ebe0;letter-spacing:.095em}
+.discovery-crown{color:#e5cd91;font-size:16px;font-weight:400;line-height:1;text-shadow:0 0 11px #e4c99933}
+.discovery-crown[hidden]{display:none!important}
+.reset-progress{display:inline;background:none;border:0;border-bottom:1px dotted #91a3b080;color:#aebfca;font:inherit;font-size:9px;text-transform:none;letter-spacing:0;margin-left:11px;padding:3px 0;cursor:pointer;opacity:.67}
+.reset-progress:hover,.reset-progress:focus-visible{opacity:1;color:#f0e2e1}
+@media(max-width:760px){.discovery-overall{font-size:10px;margin-top:20px;padding:7px 13px}.discovery-mood{font-size:10px;white-space:normal;text-align:center;margin-bottom:15px}.bottom-section{align-items:flex-start}.reset-progress{display:block;margin:9px 0 0}.passage-card h2{margin-bottom:15px}}
+/* Browser-preview fallback & readable long source credits */
+.weather-scene{background:radial-gradient(ellipse at 52% 46%,#34334b 0%,#273348 30%,#141e33 72%,#0e1728 100%)}
+.cloud-boot-note{position:absolute;z-index:12;left:50%;top:47%;transform:translate(-50%,-50%);width:min(86%,340px);padding:20px;border:1px solid #afc1d44d;background:#13213adf;color:#e4e8ed;font:13px/1.65 system-ui,sans-serif;text-align:center;border-radius:12px;opacity:0;visibility:hidden;animation:showCloudNotice .01s 3s forwards;pointer-events:none}
+.cloud-no-script{position:absolute;z-index:12;left:6%;right:6%;top:45%;padding:25px;color:white;background:#23334a;font:15px/1.5 system-ui,sans-serif;text-align:center}
+@keyframes showCloudNotice{to{opacity:1;visibility:visible}}
+.passage-meta{font-size:12px;letter-spacing:.025em;text-transform:none;line-height:1.55;color:#f5e3dd;overflow-wrap:anywhere;margin-bottom:18px}
+/* The oval must clip, not scroll. A blurred background pseudo-element extends
+   outside its box; overflow:hidden made mobile browsers scroll the whole card
+   sideways when clicking another passage, cutting off text and metadata. */
+.passage-card{overflow:clip}
+@media(max-width:760px){.passage-meta{font-size:11.5px;letter-spacing:0;margin-bottom:12px}.passage-card h2{font-size:clamp(34px,8vw,47px)}}
+
+/* V1.1 — roomier reader, legible source credits, all four atmospheric layers. */
+.passage-copy.is-short{display:flex;align-items:center}
+.passage-copy.is-short .passage-text{width:100%}
+.intro{max-width:900px}
+.intro p{max-width:700px}
+#sky,.sky-next{position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none;opacity:1;z-index:1}
+.sky-next{opacity:0}
+.focus-sky{z-index:3}
+#drift-field{z-index:5}
+.mood-word{z-index:5}.mood-word.depth-far{z-index:5}.mood-word.depth-front{z-index:7}
+.cloud-poke{position:absolute;top:50%;left:50%;z-index:4;pointer-events:none;width:clamp(185px,25vw,330px);height:clamp(185px,25vw,330px);border-radius:50%;opacity:0;transform:translate(-50%,-50%) scale(.35);background:radial-gradient(circle at center,#0b1222f2 0%,#0b1222ed 12%,#111a2dcc 27%,#23304c88 46%,transparent 73%);filter:blur(8px)}
+.cloud-poke.poked{animation:pokeHeal 1750ms ease-out both}
+@keyframes pokeHeal{0%{opacity:0;transform:translate(-50%,-50%) scale(.42)}13%{opacity:.93;transform:translate(-50%,-50%) scale(.86)}36%{opacity:.90;transform:translate(-50%,-50%) scale(1)}69%{opacity:.43;transform:translate(-50%,-50%) scale(1.1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.25)}}
+.weather-status{text-transform:none;font-size:11px;letter-spacing:.08em;color:#d6dce8}
+.bottom-section{justify-content:space-between;align-items:center;padding-top:16px}
+.bottom-section .below{font-size:11px;letter-spacing:.065em;text-transform:none}
+.bottom-section .below:last-child{text-align:right}
+.reset-progress{margin-left:0;font-size:11px}
+/* Expand the actual prose area without distorting the original oval silhouette. */
+.passage-card{height:min(780px,90svh);max-height:90svh;padding:clamp(24px,4.8vw,49px) clamp(48px,8vw,95px) clamp(24px,3vw,34px)}
+.modal-top{min-height:35px;justify-content:flex-end}
+.close{width:37px;height:37px}
+.passage-card h2{font-size:clamp(29px,4.45vw,47px);margin:2px auto 10px}
+.discovery-mood{margin-bottom:13px}
+.passage-copy{min-height:100px;margin-bottom:12px}
+.passage-meta{font-size:clamp(17px,1.55vw,19px);font-weight:540;line-height:1.4;letter-spacing:.01em;text-align:left;color:#fff4e9;margin:0 auto 14px}
+.modal-actions{justify-content:center;padding-top:14px}
+.modal-actions button{padding:12px 23px;font-size:13px}
+.read-hint{margin:0 auto 7px}
+@media(max-width:760px){
+ .intro p{max-width:580px}
+ .passage-card{height:min(760px,91svh);max-height:91svh;padding:clamp(26px,5vw,42px) 29px 23px}
+ .passage-card h2{font-size:clamp(28px,6.3vw,39px);margin:2px auto 11px}
+ .discovery-mood{margin-bottom:10px}
+ .passage-copy{margin-bottom:9px;min-height:85px}
+ .passage-meta{font-size:clamp(15px,4vw,18px);margin-bottom:12px;line-height:1.4}
+ .modal-actions{padding-top:12px}
+ .modal-actions button{font-size:12px}
+ .bottom-section{gap:10px}
+ .bottom-section .below{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){.cloud-poke.poked{animation:none}.sky-next{transition:none!important}}
+
+</style>
+</head>
+<body>
+<header class="site-header"><a class="logo" href="/">The Playground <em>/ Prose</em></a><a class="back" href="/">← Back to the Playground</a></header>
+<main>
+ <div class="intro"><div class="eyebrow">The Playground: Novels | 2005-2026</div><h1>Prose <em>Mood Cloud</em></h1><p>Since I was 10, I was writing novels. One quote that's stuck with me is that the goal of fiction is &quot;to give your reader a powerful emotional experience.&quot; I thought it'd be fun to explore that literally by presenting small passages from my novels through the emotion they invoke. Click an emotion in the cloud, get a random passage from one of my 11 novels over 20 years.</p>
+   <div class="discovery-overall" role="status" aria-live="polite" aria-atomic="true"><span class="discovery-count" id="overall-count">0 / 169 Passages Discovered</span><span class="discovery-crown" id="overall-crown" hidden aria-label="Collection complete" title="You've discovered them all">♛</span></div>
+  </div>
+ <section class="weather-shell" aria-label="Interactive cloud of literary moods">
+  <div class="weather-scene" id="scene">
+   <canvas id="sky" aria-hidden="true"></canvas>
+   <canvas id="sky-next" class="sky-next" aria-hidden="true"></canvas>
+   <canvas id="focus-sky-a" class="focus-sky" aria-hidden="true"></canvas>
+   <canvas id="focus-sky-b" class="focus-sky" aria-hidden="true"></canvas>
+
+   <div class="cloud-boot-note" id="cloud-boot-note" role="status">Preparing the weather… If the cloud stays empty, open the published website in Safari rather than previewing a downloaded HTML file in Files.</div>
+   <noscript><p class="cloud-no-script">This interactive gallery needs JavaScript. Please open its published web address in Safari or Chrome.</p></noscript>
+   <div class="grain" aria-hidden="true"></div>
+   <div id="cloud-poke" class="cloud-poke" aria-hidden="true"></div>
+   <div id="drift-field"></div>
+   <div class="fog-front" aria-hidden="true"></div>
+   <div class="weather-status" id="weather-status" aria-live="polite">Choose a mood to get a passage</div>
+  </div>
+ </section>
+ <div class="bottom-section"><span class="below"><button id="reset-progress" class="reset-progress" type="button" title="Clear your saved discoveries from this browser">Reset discoveries</button></span><span class="below">All characters &amp; text © Luke Cooper-Martin</span></div>
+</main>
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="passage-heading" aria-describedby="passage-text" aria-hidden="true">
+ <section class="passage-card" id="passage-card">
+  <div class="modal-top"><button class="close" id="close" aria-label="Close passage">×</button></div>
+  <h2 id="passage-heading">Tender</h2>
+  <div class="discovery-mood" role="status" aria-live="polite" aria-atomic="true"><span id="mood-count">0 / 47 Tender Passages Discovered</span><span class="discovery-crown" id="mood-crown" hidden aria-label="Mood complete" title="Every passage in this mood discovered">♛</span></div>
+  <div class="passage-copy" id="passage-copy" tabindex="0" aria-label="Passage text, scroll to read more"><p class="passage-text" id="passage-text" aria-live="polite"></p></div>
+  <div class="read-hint" id="read-hint" hidden>Scroll to read more ↓</div>
+  <div class="passage-meta" id="passage-meta">SAMPLE PASSAGE</div>
+  <div class="modal-actions"><button id="another">Another tender passage? ↗</button></div>
+  <p class="fine-print" hidden>Demo excerpts have not yet been replaced.</p>
+ </section>
+</div>
+<script>
+(() => {
+'use strict';
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   EDIT MOOD COLORS / WORD PLACEMENTS HERE
+   The 16 visible moods are listed below. Two have been swapped:
+   Nostalgic + Chaotic → Awe + Peaceful.
+
+   EDIT YOUR PASSAGES BELOW the mood list, inside PASSAGE_LIBRARY.
+   Each passage is a single record with a unique stable ID, an array of
+   mood IDs, and a full text string (backticks preserve paragraph breaks).
+   Passages with multiple moods count as ONE discovery across the archive.
+
+   The final selections are imported from Prose Passage Selection(4).docx.
+   Do not change IDs when editing passages if you want to preserve progress.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+const moods = [
+ {id:'tender',name:'Tender',colors:['#d7a7b0','#e8d1bd','#b8b4cb'],xy:[.505,.475],mobile:[.24,.20],depth:1.10},
+ {id:'yearning',name:'Yearning',colors:['#e7adc0','#c8a4c8','#e9c6b7'],xy:[.18,.30],mobile:[.72,.105],depth:1.10},
+ {id:'lonely',name:'Lonely',colors:['#6f83a1','#9ba6b8','#c3b9c3'],xy:[.155,.555],mobile:[.28,.35],depth:.85},
+ {id:'awe',name:'Awe',colors:['#c0bfdc','#a8cdd3','#e2cee0'],xy:[.46,.205],mobile:[.29,.105],depth:1.15},
+ {id:'anxious',name:'Anxious',colors:['#9aa8a2','#c7bc9c','#8e9eac'],xy:[.34,.355],mobile:[.73,.25],depth:.74},
+ {id:'dread',name:'Dread',colors:['#464d60','#777986','#a39ba3'],xy:[.785,.215],mobile:[.72,.44],depth:.87},
+ {id:'ashamed',name:'Ashamed',colors:['#957f86','#b7a0a0','#716e84'],xy:[.71,.73],mobile:[.25,.61],depth:.71},
+ {id:'furious',name:'Furious',colors:['#b47a78','#d19b83','#7f6577'],xy:[.885,.785],mobile:[.72,.80],depth:.91},
+ {id:'absurd',name:'Absurd',colors:['#c2b4a3','#a8bdb4','#c9a6c0'],xy:[.475,.845],mobile:[.28,.80],depth:1.03},
+ {id:'peaceful',name:'Peaceful',colors:['#c6d9c1','#c7d6db','#ebdcc4'],xy:[.675,.355],mobile:[.73,.62],depth:.91},
+ {id:'hopeful',name:'Hopeful',colors:['#d4d3a2','#b3c8b5','#c6d8cb'],xy:[.16,.835],mobile:[.24,.91],depth:.90},
+ {id:'joyful',name:'Joyful',colors:['#f4d781','#edbd85','#f7e8b4'],xy:[.856,.505],mobile:[.74,.91],depth:1.23},
+ {id:'intimate',name:'Intimate',colors:['#b99baf','#dbb9ae','#c3b3d0'],xy:[.355,.640],mobile:[.28,.465],depth:1.04},
+ {id:'bittersweet',name:'Bittersweet',colors:['#b4a6bc','#e0c4a7','#9aaec0'],xy:[.69,.886],mobile:[.68,.71],depth:.81},
+ {id:'defiant',name:'Defiant',colors:['#c39378','#c3b99c','#9296a9'],xy:[.90,.640],mobile:[.75,.545],depth:.85},
+ {id:'uncanny',name:'Uncanny',colors:['#8c9b9a','#a8a1b7','#797f8b'],xy:[.54,.655],mobile:[.28,.715],depth:.67}
+];
+
+// ── CURATED WRITING / PASSAGE_LIBRARY ────────────────────────────────────
+// Transcribed directly from “Prose Passage Selection(4).docx”.
+// To edit: each passage has its own permanent id, source, year, moods, text.
+// The complete source labels and ALL tags (including hidden ones) are retained.
+// IDs come from the source title and a fingerprint of the original passage.
+// This means rearranging records does not alter a visitor's saved progress.
+// Passage text uses \n\n for original paragraph breaks. No corrections made.
+const PASSAGE_LIBRARY = [
+  {
+    "id": "crashing-down-12119677796f",
+    "source": "Crashing Down",
+    "year": 2010,
+    "moods": [
+      "yearning",
+      "hopeful",
+      "ashamed",
+      "tender"
+    ],
+    "text": "Raven smiled back at her as she walked away. It felt weird, to talk to someone other than his father. For the rest of class, all he could think about was the conversation. Even just that simple exchange felt thrilling. He wanted to meet the girl again, to ask her name. To find out all about her. Maybe they could get to know each other and…Raven stopped himself suddenly. What was he thinking? All she did was ask him for a stupid vase, not to marry him!"
+  },
+  {
+    "id": "crashing-down-9c103005417b",
+    "source": "Crashing Down",
+    "year": 2010,
+    "moods": [
+      "lonely",
+      "tender",
+      "bittersweet"
+    ],
+    "text": "His bed was in the middle of his room, so that even if his wings were fully stretched, they would not touch the walls."
+  },
+  {
+    "id": "crashing-down-4554a1b3ad00",
+    "source": "Crashing Down",
+    "year": 2010,
+    "moods": [
+      "tender",
+      "yearning",
+      "bittersweet",
+      "dread"
+    ],
+    "text": "Maybe this was just his Dad sober. Maybe he hadn’t got drunk enough to stop caring yet."
+  },
+  {
+    "id": "crashing-down-7197a7f6352f",
+    "source": "Crashing Down",
+    "year": 2010,
+    "moods": [
+      "peaceful",
+      "tender",
+      "beautiful"
+    ],
+    "text": "Raven stayed in his bed, his eyes slowly dropping, his mind slowly drifting away. The breeze comforted him, creating a shield of noise around his ears. His wings drooped downwards slightly. All he heard was the wind’s gentle song. Things were at ease in the young man’s mind."
+  },
+  {
+    "id": "crashing-down-6dd4e71199dc",
+    "source": "Crashing Down",
+    "year": 2010,
+    "moods": [
+      "peaceful",
+      "beautiful",
+      "lonely",
+      "bittersweet"
+    ],
+    "text": "Raven slowly became accustomed to his new home. He knew where certain birds nested, which trees squirrels hid their acorns in. The animals had become familiar to his presence; birds would even land on him. Raven wondered what they thought he was. It soon felt normal sleeping on the grass, even with his head looking down at the dirt. The swaying branches became his window into the world. Fallen leaves and tossed out sweaters became his sheets."
+  },
+  {
+    "id": "crashing-down-fd1baa3665cf",
+    "source": "Crashing Down",
+    "year": 2010,
+    "moods": [
+      "uncanny",
+      "anxious",
+      "awe"
+    ],
+    "text": "Openness. That’s the first thing that hit him. It was too open, too bright. He wanted to go back, back to the warmth. Out there, there was nothing, but yet everything. He looked around and tried to comprehend everything. There were shapes wiggling near him. He touched them and realized they were his. There was so much…space."
+  },
+  {
+    "id": "crashing-down-e7a99c0b39e6",
+    "source": "Crashing Down",
+    "year": 2010,
+    "moods": [
+      "dread",
+      "grief",
+      "uncanny"
+    ],
+    "text": "His father's whole body felt cold, even in the heat of the fire."
+  },
+  {
+    "id": "crashing-down-1e745f54f5d8",
+    "source": "Crashing Down",
+    "year": 2010,
+    "moods": [
+      "anxious",
+      "chaotic",
+      "dread"
+    ],
+    "text": "With each passing second he heard another creak and crack from the house, like ticks from a clock."
+  },
+  {
+    "id": "crashing-down-21aa322c5c5a",
+    "source": "Crashing Down",
+    "year": 2010,
+    "moods": [
+      "grief",
+      "lonely",
+      "bittersweet"
+    ],
+    "text": "His vision blurred while he ran, but he didn’t wipe his eyes clear. He didn’t want to look at the world anymore."
+  },
+  {
+    "id": "crashing-down-0974f4a06b52",
+    "source": "Crashing Down",
+    "year": 2010,
+    "moods": [
+      "uncanny",
+      "lonely",
+      "alienated"
+    ],
+    "text": "\"Hello Raven,\" he said loudly. For a split second, Raven was confused about who the man was talking to. Then he remembered that that was his name. Raven."
+  },
+  {
+    "id": "crashing-down-a0f4c6b611db",
+    "source": "Crashing Down",
+    "year": 2010,
+    "moods": [
+      "absurd",
+      "amused"
+    ],
+    "text": "Her ego was only matched by the number of bow ties she wore."
+  },
+  {
+    "id": "crashing-down-61cc5c3418ca",
+    "source": "Crashing Down",
+    "year": 2010,
+    "moods": [
+      "furious",
+      "defiant"
+    ],
+    "text": "\"Help me?\" Raven asked, almost laughing. He felt strange, unlike himself. His body seemed to be off track. \"All you've done is stuck crap on me and electrocuted me!\" he yelled, kicking his chair back in anger."
+  },
+  {
+    "id": "crashing-down-a0f23153c578",
+    "source": "Crashing Down",
+    "year": 2010,
+    "moods": [
+      "defiant",
+      "furious",
+      "dread"
+    ],
+    "text": "\"Who the hell do you think you are?\" Raven yelled not only to the women, but to the whole room, the whole world. \"I’m not some lab-rat you can throw back in cage!\" he screamed, his eyes filled with fire. He saw the man come closer, the man responsible for all his misery. He came close to Raven face and stared at him with his stone eyes.\n\n\"Actually, you are just that,\" he said.\n\nRaven whole face was bent in fury. He forgot everything, everything except his hatred. Then, in the only act of defiance he had, Raven spat right in the man’s face."
+  },
+  {
+    "id": "crashing-down-87d5f92a2855",
+    "source": "Crashing Down",
+    "year": 2010,
+    "moods": [
+      "peaceful",
+      "lonely",
+      "bittersweet"
+    ],
+    "text": "Winter came to the forest, and Raven spent more and more time looking for shelter from the cold. He would sneak into restaurant and stay there during the night for warmth. Then in the early morning he'd let himself out. Food was scare, and so was water. But even with all that, Raven felt content. He felt more at home than he'd ever felt before. If guilt kept him away from human life, it was the peace that kept him in nature's life. And slowly, the nightmares came less often."
+  },
+  {
+    "id": "crashing-down-86deecdaf09c",
+    "source": "Crashing Down",
+    "year": 2010,
+    "moods": [
+      "awe",
+      "hopeful",
+      "bittersweet"
+    ],
+    "text": "Raven slowly walked home. The clouds blew away, and the rain stopped, revealing the dazzling sun. Raven looked up at the sky and to his surprise saw a rainbow. It stretched from one end to the other, draping the heavens in an luminous color. Raven stopped and stared at it, astonished at the light. Then, the rainbow died away, leaving the sky a dull blue."
+  },
+  {
+    "id": "sincerely-993c2fcc4e55",
+    "source": "Sincerely, :)",
+    "year": 2010,
+    "moods": [
+      "lonely",
+      "yearning",
+      "bittersweet"
+    ],
+    "text": "Greg wondered if any of them thought, even imagined, that he was running away from home. It was ludicrous to think someone would, he knew, but it made his life feel at least a bit important. Like someone would care that he was gone."
+  },
+  {
+    "id": "sincerely-a0655ffd0dcc",
+    "source": "Sincerely, :)",
+    "year": 2010,
+    "moods": [
+      "lonely",
+      "yearning",
+      "bittersweet"
+    ],
+    "text": "He walked past houses, each one safe, dry, warm. So unlike the brutal outdoors. They had lights at night, a bed to sleep on and a pantry full of food to eat whenever they pleased. They were so unaware of what they had; Greg was unaware of what he’d had until now."
+  },
+  {
+    "id": "sincerely-a9cc424e1555",
+    "source": "Sincerely, :)",
+    "year": 2010,
+    "moods": [
+      "lonely",
+      "nostalgic",
+      "bittersweet"
+    ],
+    "text": "I tried to remember what my Mom looked like, but I could only think of a few details. Her frizzy brown hair. That angry, disapproving look in her eyes. I couldn't actually remember her face."
+  },
+  {
+    "id": "sincerely-078b31f59b44",
+    "source": "Sincerely, :)",
+    "year": 2010,
+    "moods": [
+      "yearning",
+      "ashamed",
+      "lonely",
+      "tender"
+    ],
+    "text": "Sam looked out the window, and spoke even softer. “But I can’t… Even now, I still wish that I could go back to them. Be the son they want me to be.” He wiped his eyes; he was almost crying."
+  },
+  {
+    "id": "sincerely-f368b63ab7c7",
+    "source": "Sincerely, :)",
+    "year": 2010,
+    "moods": [
+      "yearning",
+      "hopeful",
+      "intimate",
+      "bittersweet"
+    ],
+    "text": "\"Maybe after this, we'll move to Canada,\" I whispered to Olivia with a laugh. No one cared about Canada. \"We could stay there, and just be people. Get a house. Be like roommates. Maybe even go back to school.\"\n\nOlivia looked up at the sky. \"That'd be nice,\" she said. \"Just being people.\""
+  },
+  {
+    "id": "sincerely-d82cd06eaff1",
+    "source": "Sincerely, :)",
+    "year": 2010,
+    "moods": [
+      "tender",
+      "absurd",
+      "intimate"
+    ],
+    "text": "Furball looked up at me and squeaked. It was a miracle he had survived getting out of the bar. He went over to me and placed him head on my leg. “Stupid rat,” I said softly to it. He didn’t know rats weren’t supposed to be affectionate."
+  },
+  {
+    "id": "sincerely-346bfa47f877",
+    "source": "Sincerely, :)",
+    "year": 2010,
+    "moods": [
+      "tender",
+      "intimate",
+      "bittersweet"
+    ],
+    "text": "Sam nodded quietly. Then, I heard him start to cry. He buried his face in his hand and just cried, right there in front of me. I didn't know what to do. So I just let him cry."
+  },
+  {
+    "id": "sincerely-75cbfea65d95",
+    "source": "Sincerely, :)",
+    "year": 2010,
+    "moods": [
+      "tender",
+      "intimate",
+      "nostalgic"
+    ],
+    "text": "“Bad dream,” she said, and sat next to me. I pulled myself up and we sat in silence for awhile. I didn’t fall asleep until she had, kind of protecting her in a way. Like I wished someone did when I had a bad dream. Then, when she did finally fall asleep again, we slept side by side that night."
+  },
+  {
+    "id": "sincerely-647d668f4356",
+    "source": "Sincerely, :)",
+    "year": 2010,
+    "moods": [
+      "yearning",
+      "ashamed",
+      "intimate",
+      "tender"
+    ],
+    "text": "\"It's just...\" he paused. \"It's just sometimes I wish I could have someone too. You and her, are so beautiful.... it makes me think that maybe, people are right. That this isn't natural.\"\n\nI was taken aback, and it took me a second to realize what he was saying.\n\n\"No, don't say that. Your relationship will be just as natural as mine, probably even more. People are different... and I think that's okay. It's got to be okay.\""
+  },
+  {
+    "id": "sincerely-ecd4fd346651",
+    "source": "Sincerely, :)",
+    "year": 2010,
+    "moods": [
+      "absurd",
+      "amused"
+    ],
+    "text": "Beside the shirt he was wearing, Greg had only brought three shirts with him. And then there was pants; he had completely forgot about them. “Note to self,” he thought. “Pants are not optional.”"
+  },
+  {
+    "id": "sincerely-db042a823b18",
+    "source": "Sincerely, :)",
+    "year": 2010,
+    "moods": [
+      "absurd",
+      "playful"
+    ],
+    "text": "Proposition. Greg laughed the word. He noticed that whenever you say a word too much, it sounds stupid. It doesn't matter if it's the smartest sounding word in the world; if you say it enough times it's bound to sound stupid. Stupid. Stupid, stupid, stupid, stupid, stupid. Greg stooped thinking about how stupid stupid sounded and went back to the normal world."
+  },
+  {
+    "id": "sincerely-898ddf0080f7",
+    "source": "Sincerely, :)",
+    "year": 2010,
+    "moods": [
+      "absurd",
+      "joyful",
+      "tender"
+    ],
+    "text": "After a few bites, Furball was done with the food, and immediately pooped on the cracker. I let out a laugh. I had the greatest pet ever."
+  },
+  {
+    "id": "sincerely-a6436c2da1f3",
+    "source": "Sincerely, :)",
+    "year": 2010,
+    "moods": [
+      "absurd",
+      "intimate",
+      "yearning"
+    ],
+    "text": "\"You mean, she likes me then?\" I asked.\n\nSam was silent for a minute. \"Do you mean like, or like?\" he asked quietly.\n\n\"Like,\" I said, though I wasn't exactly sure which one I meant myself."
+  },
+  {
+    "id": "sincerely-f99f5d00f0e7",
+    "source": "Sincerely, :)",
+    "year": 2010,
+    "moods": [
+      "absurd",
+      "ashamed"
+    ],
+    "text": "Sam looked at me for a second, then nodded. I never knew that someone could nod sarcastically before."
+  },
+  {
+    "id": "post-7bfedff9b96c",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "dread",
+      "chaotic"
+    ],
+    "text": "\t\"Don't!\" I yelled, and started to run at her. She turned to me. Then, there was a huge bang that caused my ears to ring, and I felt lightning fast air whiz by my cheek. \n\n\tI stopped, looked up and saw the girl had aimed the gun at me. Then I realized she had shot a bullet. It had missed, but just barely. My heart thumped loudly, and my knees felt weak. I touched my cheek, and the skin there was clammy.\n\n\tShe had been within a foot of killing me."
+  },
+  {
+    "id": "post-a03c3bda406f",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "uncanny",
+      "dread",
+      "lonely"
+    ],
+    "text": "My eyes were looking ahead at a tire of one car. Beside it, there was a stain of blood covering a mini Etch-a-Sketch. For some reason, my eyes focused on that. I might have stayed there forever looking at that Etch-a-Sketch, if I hadn't heard a voice behind me."
+  },
+  {
+    "id": "post-34bc5d602f9b",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "uncanny",
+      "anxious",
+      "dread"
+    ],
+    "text": "Okay, I'm going to say it. Zombies. There. Zombie apocalypse. I'm in a zombie apocalypse. The words look out of place on that page, like they belong to a movie script or a page of a book, not scrawled in my own handwriting with a half broken pencil as light shines in and out of the light above me. Even if that's what this is, it isn't."
+  },
+  {
+    "id": "post-2c6a12814cec",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "furious",
+      "grief"
+    ],
+    "text": "Zombies. I felt like someone had just smacked me across the face. Zombies?! He had the nerve to categorize everything, this, as 'ZOMBIES?!' It was unbelievable. Did he even realize how fucking simple-minded and offensive what he just said, to say that all those soulless people, REAL people each with their own life that they had lost, to categorize that with things that said 'Brrraainnns' and died by the hundred just for fun!? I stood up suddenly and looked at him with pure content, my face filled with loathing.\n\n\"Go fuck yourself.\" I turned and slammed the door behind me and stormed through the halls."
+  },
+  {
+    "id": "post-24081ffea9cc",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "uncanny",
+      "absurd",
+      "anxious"
+    ],
+    "text": "He moved something, and I braced myself to run. But all he was moving was his arm in a semi-circle. It took me a second to remember that he was waving hi.\n\n\"Hey,\" he said. I didn't say anything. The silence grew. Neither of us moved to the other. His informality seemed.... no, it was normal. It was so out of place. Did he even care what was happening, I wondered? But the silence answered nothing."
+  },
+  {
+    "id": "post-af18342917a6",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "anxious",
+      "dread",
+      "lonely"
+    ],
+    "text": "\tMore time passed. I wondered how long we had been there. A day? A week? But then the truly terrifying possibility came over me. That it had only been a few hours. I stood up and pushed against the door. It won't open, I told myself and made myself stand back against the wall. \n\n\tMore time. Maybe a day. Maybe a minute."
+  },
+  {
+    "id": "post-2d75b265903f",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "uncanny",
+      "hopeful",
+      "dread"
+    ],
+    "text": "I realized the monster was talking.\n\nThe words were jumbled together, and I could barely make out any. From what I heard, it seemed like babble, there was no coherency to it. \"Sun...on...are...red...\" It reminded me of baby talk.\n\nI watched it move. It was walking in a crooked line, and seemed to be slowly veering to the right of me. I waited, watched and listened. It kept going, past me, and through the forest. Everything became silent again."
+  },
+  {
+    "id": "post-4008a7533725",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "lonely",
+      "dread"
+    ],
+    "text": "Every so often there are sounds from the outside. Mostly just creaks and bumps. All of them could just be nothing, but I they still scare the crap out of me. I think I heard a moan once. It was raspy, unlike an animal’s or human’s, mechanical, dread. I woke up to it, stood up with my back against the wall, stopped breathing and waited. But it was completely silent after that, like it knew, like it was toying with me. I wanted to yell, but knew I couldn’t, I wasn’t going to be that stupid. After a long time, I just let myself slide down the wall and tried to go back to sleep.\n\nI’m alone."
+  },
+  {
+    "id": "post-a4f49670ff17",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "lonely",
+      "anxious",
+      "dread"
+    ],
+    "text": "I'm hanging on to these. What day it is, the time, I even changed clothes yesterday with my gym clothes in my locker. I want to feel human, I don't want to lose myself in this. But, slowly... Time isn't a friend anymore. I guess it never was, but now its movement mocks me. Time passes and I stay still. I want to move with the time, but even now it's going away. I'm losing everything that could ground me to some reality I've known."
+  },
+  {
+    "id": "post-cd971d675238",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "lonely",
+      "bittersweet",
+      "dread"
+    ],
+    "text": "It was insane how many cars were all stuck on the road. I knew each of them had their own story to tell, but the air was silent and the highway was empty. I would never know them."
+  },
+  {
+    "id": "post-df7a5073727f",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "nostalgic",
+      "yearning",
+      "intimate",
+      "bittersweet"
+    ],
+    "text": "\"We should... meet up again,\" I said, trying to make my voice not crack. \"Next time there's a party just blow it off.\" I felt myself get up. \"Do this again, but without the beer and the sex, just...\" I tried to swallow and felt a lump in my throat, and I coughed and brushed my hand under my eye.\n\n\"Just be kids,\" she said. I nodded. She got up, and I could see the sunlight reflect across her glazed eyes. She handed me a piece of paper with her number, and I scribbled out mine. I must have put the paper down, because I lost it later on. But back there, I wanted to say more, but didn't know what or how to, so I just walked to the door. I lifted my hand and waved at her. She waved back, and then I turned back and moved out of the house and down the street, keeping the tears inside and telling myself I was being stupid, that I really would not go to the party and instead meet up with her. I'd see her again.\n\nBut I never did."
+  },
+  {
+    "id": "post-f628d9fd28f1",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "bittersweet",
+      "lonely",
+      "yearning",
+      "dread"
+    ],
+    "text": "It's late, and I'm writing by the reflection of the moon through the window. And even though it still shocks me to say this, I wish I was back at the school. It was so much easier there. Memories ate away at me there, sure, but now I have something worse here. Fear of losing the now, not being able to make the memories I want to. It's not even that I'm afraid to die, I'm afraid to leave everything behind unfinished."
+  },
+  {
+    "id": "post-9edf3fdbb461",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "tender",
+      "intimate",
+      "yearning"
+    ],
+    "text": "\"It's okay, shh, shh, you're safe, it's okay\" I said to him, trying to be soothing. He quieted down and I moved to go back to my chair, but while I was leaving I suddenly felt him grab my arm.\n\n\"Stay,\" he asked me with a voice that for the first time truly sounded like a 7 year old. Innocent, defenseless, needy. I turned back to him and nodded okay. I sat on the other side of the bed with him for the rest of the night."
+  },
+  {
+    "id": "post-19946cf1d191",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "tender",
+      "anxious",
+      "dread"
+    ],
+    "text": "I stopped walking for a moment for him to catch up, and the moment I stopped walking, all sound disappeared. It was like the kid was floating. How did he manage not to step on anything? I walked his eyes. While it looked like he just had his head down in gloom from a distance, as he came closer I saw that his eyes were moving around with purpose, concentrating on the ground intently. I thought back. The whole time we were walking, I had never heard him. He was deathly silent, and so was his dog, unless there was a danger. It wasn't a coincidence; he was making no sound for a reason."
+  },
+  {
+    "id": "post-aa8769ee0135",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "tender",
+      "hopeful",
+      "yearning"
+    ],
+    "text": "There was a long pause. He looked away from me, then at me, then away again. He moved his fingers over the dog's fur in a circular motion.\n\n\"I want... to stay with you,\" he finally said. \"Sis likes you I think. We can go and look for Mom, and then go somewhere safe.\"\n\nI nodded my head. \"Okay, that's what we'll do.\""
+  },
+  {
+    "id": "post-f02e2f24f8db",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "tender",
+      "lonely",
+      "bittersweet"
+    ],
+    "text": "Rat just gave me some soup. I guess he decided how to split it. He handed it to me in the can, without any spoon We've only found one, and the kid is using it.\n\n\"Enjoy. I... hope I can find more,\" he said. Then he walked away. I said thanks, but I didn't think he heard me.\n\nI think I owe Rat my life. Yes I saved him from the collapse, but he took me here. I can't sit up without crying out in pain from the blisters and sores on my chest. If he wasn't here, I'd have starved or been killed by now."
+  },
+  {
+    "id": "post-6a70e9b7887d",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "tender",
+      "nostalgic",
+      "intimate"
+    ],
+    "text": "I rubbed his shoulder, trying to do it how my mother used to when I was young."
+  },
+  {
+    "id": "post-ac289280a704",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "joyful",
+      "absurd",
+      "tender"
+    ],
+    "text": "We had given him a can for the dog, but Sis didn't seem to want to eat the green peas. Finally, kid started to spoon them into her mouth, and she gave up and let him. Her face was scrunched up and she looked like someone was trying to make her eat sand. The kid tried to tell her that she had to eat her vegetables. That made everyone laugh, even Claire."
+  },
+  {
+    "id": "post-ed2a6380d22c",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "dread"
+    ],
+    "text": "I'm just so tired. My body feels fractured like glass taped together. "
+  },
+  {
+    "id": "post-da84a258faf0",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "tender",
+      "bittersweet",
+      "lonely"
+    ],
+    "text": "The sun pressed down on me as I walked. I opened up the backpack I was wearing and took out a slice of bread. There was 9 in the box, so the kid could get an extra one now.\n\n\"Here,\" I said, handing it to him. He nodded thanks, ate half of it, and gave the other half to Sis. I had found a small pile of dog food the first day, but that had run out by now. So Sis was living off scraps.\n\nI guess we all were."
+  },
+  {
+    "id": "post-b523a40c3838",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "defiant",
+      "uncanny"
+    ],
+    "text": "As we walked, my mind went back to the morning. The disease. Not weakening. Just changing. And that meant it had to be something that could change, like a virus. Language was something only humans had, at least animals didn't have it to the degree we did. So there was something working in that things brain that hadn't before. And the thing that stuck with me, even when I tried to discount it and tell myself not to believe, kept swirling in my mind. Hope. A virus was a disease.\n\nIt could be cured."
+  },
+  {
+    "id": "post-4a121b41ea85",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "nostalgic",
+      "chaotic",
+      "bittersweet"
+    ],
+    "text": "Now that I had accepted those, the strangest things crossed my mind as I lay there in the darkness. The look on Eddie's face when I had kissed him for the first time. Tyler's laugh. My psych professor's board with the concept of introspection written out on it. The way cars would whiz by my room as I stared out the window. The moment right before you passed out after a party when the conscious world collided with the unconscious. A razor blade. Locking myself in my room. My mother screaming at me. The blaze of the truck's headlines as it crossed his eyes."
+  },
+  {
+    "id": "post-cfcf0b53eb2b",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "ashamed",
+      "intimate",
+      "bittersweet"
+    ],
+    "text": "“Well, I’m gay,” I said. My face turned a little red like it always does after I say that. The shame never really went away even when I convinced myself it didn’t matter. Because it still did."
+  },
+  {
+    "id": "post-1cac11ddefbd",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "lonely",
+      "intimate",
+      "bittersweet"
+    ],
+    "text": "I don't know why I just wrote that. I'm just writing now. I've realized that if I write fast without thinking, just write whatever comes to mind, and all I do is concentrate on that, then sometimes that makes things easier for a second."
+  },
+  {
+    "id": "post-eae5dbcf39c9",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "uncanny",
+      "dread",
+      "bittersweet"
+    ],
+    "text": "It turned to afternoon. As we walked further and further through highway and forest, the effects of the bombing started to go away. Green started to pop up, and the world seemed to move again. The air felt fresher on my cheek, and I took a deep breath in and out, trying to push all the dusty air out of me. But as life flourished, so did the danger. That town had been a grave for anything that could be alive, and as plants and animals came back, so did the threat of them."
+  },
+  {
+    "id": "post-2674244ff547",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "ashamed",
+      "defiant"
+    ],
+    "text": "I spent the next hours searching through houses for any supplies. All of the houses that still were partially up (not crumbled) I had searched through before, so I had to walk through the rubble. My hands scraped at the bricks and moved them aside to try and find something underneath. Whenever I saw something not gray or black, my heart would race. Once the sun was fully up, I held a gallon of milk and a half-empty bag of bread in my hands with barbaric pride. I felt like an animal."
+  },
+  {
+    "id": "post-a3a85753c9e8",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "chaotic",
+      "anxious",
+      "dread"
+    ],
+    "text": "The room was completely silent except for the TV which now sounded impossibly loud. It was dead silence, the kind where nothing speaks or moves. This continued, like it always does, until one person spoke.\n\n\"We have to run.\"\n\nThat sound jump started everything back into motion. An avalanche of sound cascaded over the room and everyone began to reanimate at once."
+  },
+  {
+    "id": "post-d8594c5d1116",
+    "source": "-Post",
+    "year": 2011,
+    "moods": [
+      "awe",
+      "dread",
+      "uncanny",
+      "chaotic"
+    ],
+    "text": "My eyes started to work again, and what I saw was as unreal as what had happened back in the room. There was sharp brown and gray dust protruding everywhere, and there was a demonic bass sound that seemed to be coming from the earth itself. I looked past the dust and saw a stark cloud that covered the entire sky. It sliced straight up through the sky and at the top exploded into a a ring of pure light."
+  },
+  {
+    "id": "the-19-club-c2731aab151e",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "anxious",
+      "dread"
+    ],
+    "text": "I had 259,000 minutes left until I turned 20, and each was burning away like wax to dynamite."
+  },
+  {
+    "id": "the-19-club-a18ee39b991a",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "anxious",
+      "dread"
+    ],
+    "text": "A man entered in, old, with just wisps of white hair left on his head and a portly belly propelling him forward. Everyone’s eyes snapped to him, deference and forced smiles covering our faces. He slowly looked around, taking us all in. Whether like a mother about to say goodbye to her children, or a butcher preparing for the slaughter, I didn’t know."
+  },
+  {
+    "id": "the-19-club-a46301ba6f54",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "ashamed",
+      "lonely",
+      "bittersweet"
+    ],
+    "text": "I was only two years into the conservatory, but music had already transformed from a passion into a chore. More than a chore, a job. Full time, no pay, no vacation. Each day clocking in to move my bow over the same four strings, thousands and thousands of times until I inched ever so slightly to becoming a perfect robot."
+  },
+  {
+    "id": "the-19-club-70f49b484c7a",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "dread",
+      "uncanny"
+    ],
+    "text": "After that, there were just the normal waivers I had already read up on. First was the disclaimer of what I was going to enter, the approval rate of it, the potential for injury and death. Then the agreement to live by military law. I signed each one quickly, gliding my finger over the screen. Giving away my right to protest, to own property, to divulge any information to people including journalists, to have kids. Each swipe of my index finger was another right whisking away. In a minute, there were none left to take."
+  },
+  {
+    "id": "the-19-club-f8680eadf2cf",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "uncanny"
+    ],
+    "text": "I nodded. When you were born, you were given a one-syllable name. It was incomplete though, a half name for a half person. Only after you got approved did you get to go by your full name, your approved name. A mark that you had proven yourself to be worthy of living."
+  },
+  {
+    "id": "the-19-club-f45a2b27e930",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "tender",
+      "yearning",
+      "bittersweet"
+    ],
+    "text": "We stood there in silence for a moment. There was nothing else to say, nothing else to do except for me to get in line and wait. Every moment that passed another kid walked by, adding to how long I had to wait. Every moment was delaying the inevitable, but there was a metal anchor going from my throat all the way down to my shoes that held me in place. There had been so many fights between us, so many tears and bitter words, and nine days out of ten the only thing I felt for her was annoyance. So why did it feel like if I moved, half of my heart would rip in half and leave me just so it could stay with her?"
+  },
+  {
+    "id": "the-19-club-d3b25be08e8a",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "tender",
+      "nostalgic",
+      "yearning",
+      "bittersweet"
+    ],
+    "text": "Eventually though, they slowed, and we pulled apart. Our eyes met, and used everything I had to try and remember this moment. Try and remember her face, the exact way her hair went from straight to the curls she put in, the tiny bit of pink blush she would put on, the way her ears stuck out just a little more than most. Everything that made her so weird and infuriating and unique I cataloged in my brain like precious jewels."
+  },
+  {
+    "id": "the-19-club-267729550697",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "tender",
+      "hopeful",
+      "bittersweet"
+    ],
+    "text": "“You’re gonna do great,” I said.\n\n“Thanks,” he said, glancing at my bed. “How the violin practice going?”\n\nI wanted to complain, to tell him every issue I was having. But I caught his eyes and nodded.\n\n“Perfect,” I said. “I’m really feeling good.” He didn’t seem convinced. I walked over, took the violin up, and began to play.\n\nJust four short measures. But ones I knew were perfect, and that sounded more impressive than they were. Once I finished, I put it down and met Pete’s gaze again. He let out a little laugh, looking impressed.\n\n“Alright,” he said, still laughing. “Guess I don’t have to worry about you anymore.”"
+  },
+  {
+    "id": "the-19-club-68abd81b0338",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "dread",
+      "intimate",
+      "tender",
+      "bittersweet"
+    ],
+    "text": "\"It's just...\" he looked up and blinked his eyes. His voice became small, so different from the self-assured person I'd always known. \"What's it gonna feel like?\"\n\nA tear fell from his eye, trailing down his nose until it rested on his shaking upper lip. All the oxygen seemed to go from my lungs, and I wasn't sure if I was breathing anymore. It took everything I had to say anything.\n\n\"The injection?\" I asked.\n\nHe wiped his eyes, nodding.\n\n\"That, and... what's my brain gonna feel. I mean, as I'm drifting off. What's the last... the last thought I'll have?\""
+  },
+  {
+    "id": "the-19-club-833874f7ed92",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "nostalgic",
+      "tender",
+      "bittersweet"
+    ],
+    "text": "The memory came in without me trying to. The four of us had all gone to the beach on a day trip, the only time we ever did even though we drove past it nearly every week. The sun was hazy that day and there wasn't a cloud in the sky. I was young then, too scared to go in the water with Pete. So Mom and Dad sat with me as I made sandcastles.\n\nAs the hours passed, Pete had finally come back in, exhausted and dripping water everywhere. He collapsed on one of my sandcastles, I had burst into tears. And then he sat up, sand everywhere on his body, and grabbed a pile in each hand. \"Let's make something even better then.\"\n\nFor the rest of the day it had been all four of us. Mom and Dad had come down from their chairs and joined us, and we all worked together. By the time the sun was starting to head down and the sky had became an amber red, there was a castle taller than me and a village below it. All of us got into a pose as Dad took a picture. It was one of the only times I could remember us all just being together, content."
+  },
+  {
+    "id": "the-19-club-81d584365dcd",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "grief",
+      "lonely"
+    ],
+    "text": "Pete had surrendered hours ago. After his conversation with me late the night before, we woke up early in the morning. The memories were too painful to even play back in my mind. I didn't want to think about what we tried to say, how we spent those last hours. How Pete took it all without a single tear. The car ride over, walking into the center. How the staff there treated him like a war hero, going off to battle. The final moments of being able to see him. The fear that was building up beneath his eyes, ready to pour out at any second. My hand holding his. The last words I said. How he turned and we just watched him. I hated all of it.\n\nI couldn't tell if my tears were coming still or not. It would seem like I was completely numb to anything, and then I would remember Pete's arm on my shoulder and my body would shake."
+  },
+  {
+    "id": "the-19-club-95445d5496d4",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "tender",
+      "intimate",
+      "bittersweet"
+    ],
+    "text": "We sat there in the darkening night, watching the cars and people, lights and sounds, the entire world running at breakneck pace towards something that maybe none of us really could now. It was nice, just sitting like this, treating time not as an enemy.\n\n\"In high school,\" Haze said. \"I thought if I just straightened my hair out, put highlight and blush on, maybe forced myself to listen to the same music, I would be able to fit in with them. The mean girls. Guess I should have taken their name at face value.\"\n\n\"Hey, at least you tried,\" I said. I thought back to high school where the only place I belonged was in a practice room, the only friend group I had was the two violin chairs I sat next to."
+  },
+  {
+    "id": "the-19-club-0019b885d710",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "hopeless",
+      "yearning",
+      "bittersweet"
+    ],
+    "text": "\"'The river will always end up at the sea.'\"\n\n\"What?\"\n\n\"That was their mantra. That life would always work itself out.\" He sighed, and pushed his feet up so he was higher over the barrier. \"I think my river's dried out.\""
+  },
+  {
+    "id": "the-19-club-c87bb6d20464",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "defiant",
+      "furious"
+    ],
+    "text": "\"You need to sit-\"\n\nHe yanked my hand off of me and pushed me back forcefully.\n\n\"Don't,\" he said, his voice low and harsh. \"Let me deal with my own shit, and don't get in the way. I say I can walk /I can walk./\" He turned around and moved after Claire. I stood watching him go, walking towards the setting sun. Fine. I looked down a the kid. His hand was shaking slightly."
+  },
+  {
+    "id": "the-19-club-e14111cf48df",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "peaceful",
+      "awe",
+      "bittersweet"
+    ],
+    "text": "Tay, the snowball girl, led me back to the small park at the center of the conservatory. It was the prize of the campus, the photo on every promotional material. A real, 500 by 500 foot park with real trees, grass, and even a fountain for warmer months. At once it felt like an embarrassment of riches to not use it for something that could house more people or resources, but no one could deny how beautiful it was to walk through."
+  },
+  {
+    "id": "the-19-club-112242a45f45",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "tender",
+      "absurd",
+      "bittersweet"
+    ],
+    "text": "\"I want you with us,\" I said. \"I'm not joking, we need you.\"\n\n\"Heh. For what? Dragging you down?\" I tried to rack my brain. It was true, he was the weakest link. I had just been friends with him because he made it happen. But beyond logic, there was something.\n\n\"There's morning I hate the world. And then you would run up and bounce off me and say something ridiculous and way too loud. And I would hate it just as much, don't get me wrong. But I was smiling.\""
+  },
+  {
+    "id": "the-19-club-51a68b6f5122",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "furious",
+      "chaotic",
+      "dread"
+    ],
+    "text": "“You think I’m going to keep putting up with this?! You gone until who knows when!?”\n\n“I’m SEVENTEEN!! How can you not get that through your head?!”\n\n“And do you know what you’ll be in three more?! DEAD. The fire department does drug tests.”\n\n“I’m not… No one cares about alcohol, Mom!”\n\n“PETE, YOU’RE UNDERAGE.”\n\n“Okay just, can you just calm down. Hen has school tomorrow.”\n\n“Oh, and you DON’T?! You just think you’ll get approved by being buddy buddy with all the alcoholics in the department?!”\n\n“You know nothing about them. You know nothing about me!”\n\n“My son? I know nothing about my own son? I don’t know how you got so SCREWED up.”\n\n“Mom, you’re gonna wake him up-“\n\n“HE’S ALREADY AWAKE!”\n\n“Just shut the fuck up!”\n\nMy wall rocked with the sound of glass shattering, and I squeezed my eyes shut, trying to push the sounds out of my head."
+  },
+  {
+    "id": "the-19-club-fe87d7fa4bdd",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "furious",
+      "defiant",
+      "ashamed"
+    ],
+    "text": "\"And maybe,\" he said, each word a cocked shotgun shell. \"You're so controlling, manipulative, and abusive, that, that you broke me. You took me, and kept demanding I do everything exactly how you want it. Study only when you think I should. Get emotional only when you think it's worth it. You even made me hate to dance because you made such a big deal out of me being perfect.\"\n\nI tried to breath out \"I'm sorry.\" But I was wordless.\n\nReem blinked the tears from his eyes. \"Well, I'm done. If I'm gonna die, I'm gonna be me at least. You never could keep a promise.\""
+  },
+  {
+    "id": "the-19-club-3126ee013f3d",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "hopeless",
+      "yearning",
+      "tender"
+    ],
+    "text": "Night came, and I forced myself to relax. I couldn’t think about tomorrow, about how every minute I lay awake was one less minute of sleep to get me through tomorrow. Instead, I brought out memories. Going to the beach and making sandcastles all day while everyone else in my family watched or swam in the ocean. Walking our old dog Mister down the block and having to stop every minute so he could sniff and finally try and pee a bit more. Snowfighting against Tay with Mitchell the day I had met them. The view outside our first apartment of the lone tree, months before it was torn down. I wiped water from my eyes. Even the good memories had pieces missing from my heart. I closed my eyes and let them all melt over me into a cocoon that protected me. I missed them."
+  },
+  {
+    "id": "the-19-club-0828509ca3f9",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "absurd",
+      "bittersweet"
+    ],
+    "text": "It didn’t take long to prepare to apply for the military. It almost didn’t take any thought. I’d spent nearly a decade for the chance to audition to be a violinist, and all it took to get the chance to become a soldier was my mom measuring my waist as she filled out a form."
+  },
+  {
+    "id": "the-19-club-915c8554615f",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "absurd"
+    ],
+    "text": "A hand rose. \"Yes?\" Sarg asked. It was Jac.\n\n\"Sorry if this is a stupid question. What's the major area with the icon that looks like chicken legs on a book?\"\n\nSarg sighed. \"Okay. No more questions.\""
+  },
+  {
+    "id": "the-19-club-545b40e4be18",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "absurd",
+      "chaotic"
+    ],
+    "text": "\"I think this is the point bravo,\" Jac said, his finger on a nondescript section. \"Since it kinda looks like a hand clapping.\"\n\n\"What?\" Haze said, sounding about ready to quit.\n\n\"You know... like bravo is 'good job!'\"\n\nNo one said anything for a moment. Haze turned away wordlessly and was gone. Finally, Blaine gave a small cough.\n\n\"I think the bravo is because it stands for B, buddy.\""
+  },
+  {
+    "id": "the-19-club-7f9cb64e1360",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "ashamed",
+      "lonely",
+      "intimate"
+    ],
+    "text": "I sat back, and the space hit me. All of a sudden the heat from him evaporated, and the world existed again.\n\nI felt cold. His room was dark and crowded from being a single. The winter air had crept in and was chilling my body. It seemed silly that I was naked in this unheated room. There was a flick, and then a blinkingly bright light. I squinted my eyes, a dull pain at the center of my forehead.\n\n“Thanks man,” he said, already slipping on a shirt. “I needed that.” I nodded, not knowing what to say. I barely could remember his name. Ben? Jer? He said nothing. The silence was awkward. I just wanted to leave."
+  },
+  {
+    "id": "the-19-club-8e86590c1776",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "intimate",
+      "joyful",
+      "hopeful"
+    ],
+    "text": "\"Hey, look at me. Hen.\" I looked over at Blaine. He was smiling. \"Just focus on me, and the music. That's it.\"\n\nHe propped me up a bit and went back to swaying. I tried to look away, but heard an angry grunt. So I turned back, and just stared at Blaine.\n\nThe beat was like a samba, fast and irregular. Blaine swayed left, right, then left, left, mixing it up. Then a twist, and I was off the ground in a swirl. I panicked for a moment, but then felt the air against my skin and began to smile. Blaine laughed as he put me down, and went right back to it."
+  },
+  {
+    "id": "the-19-club-1e7972734091",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "hopeful",
+      "yearning",
+      "bittersweet",
+      "joyful"
+    ],
+    "text": "Blaine and the man helped me to sit down, and then I was handed the violin. It felt bizarre to hold it again. The wood was crude, the sides of the violin slightly stripped down from collisions with the ground, and the strings were nothing but metal. A rush of blood at once both hot and cold came over my body. But as my fingers swiped through the violin, there were no hairline cracks. It was good to play. I couldn't even tell what I was feeling. If it was anxiety, or excitement, or dread, or something else. I hadn't played this instrument since the last approval test, the one I failed, the one that had sent me on this insane journey. In a way, it represented all my failures.\n\n\"Well?\" Blaine asked. I looked up and saw him and all the men staring at me, an impatient audience. I grabbed the bow, and breathed in, trying to think of any song. The only one I could though was my audition song. I didn't want to go through that again. My eyes fluttered up to Blaine, and we locked stares. I moved the bow across the first note of the piece.\n\nG. Then going to the next, remembering what to do with my other hand, to feather the notes as I went. Blaine never looked away from me as I played, and I never broke eye contact with him. My mind was clear of thoughts. His voice was in my head; \"Just focus on the music and me.\" I closed my eyes, letting myself hear what I was creating. It didn't sound so awful. Amazingly, it was kind of fun to play. There was no pressure, no goal to get. I just moved from note to note, string to string, movement to movement, and let the sound carry itself and do whatever it wanted."
+  },
+  {
+    "id": "the-19-club-87a20f9c2a7b",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "intimate",
+      "tender",
+      "anxious"
+    ],
+    "text": "As his hand went to the lamp I reached mine out, stopping him. My heart beat fast, but I pushed forward.\n\nWith the caution of holding onto the claw of a lion, I moved Blaine’s arm to rest on my chest, not being able to breath the entire time. When it rested there, I waited and felt his hand against me, and then slowly, gingerly, let my hand go, waiting for Blaine to move his hand back.\n\nHe stayed. And as the second passed, moved his other arm to wrap around me, so he was holding me in a cuddle. I felt his warmth. Closing my eyes, I thought back to the festival. To all the families, brothers and sisters, parents, all being together. To the kids running around and just laughing. To everything I didn’t have anymore."
+  },
+  {
+    "id": "the-19-club-2f6fb500c667",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "tender",
+      "intimate",
+      "bittersweet"
+    ],
+    "text": "“I… lost my brother,” I said to Blaine. I didn’t know why I said it.\n\nThis wasn’t something I told anyone. But maybe just saying it was like a weight shifting, from always being on my shoulders to just a bit being held on Blaine’s.\n\nI continued. “He was my older brother. Pete. He… never got approved.”\n\nBlaine squeezed me tight and I closed my eyes and just let myself feel him hold all my pain like water in his hands."
+  },
+  {
+    "id": "the-19-club-482f2c93b1f9",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "defiant"
+    ],
+    "text": "\"You really think of yourself like that?\" Reem asked. \"Our world has never been more technologically advanced, and we're one of the only countries still offering full reproductive and job choice freedom.\"\n\n\"That's just an illusion,\" I said, feeling the debater in me awaken. \"What choice do we really have? You can fuck and pop out a baby, but you can't control if it lives or dies. You can follow your dream, but how many people really choose a career without looking at the approval ratings for it?\""
+  },
+  {
+    "id": "the-19-club-2427ac0c2897",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "bittersweet",
+      "yearning",
+      "dread"
+    ],
+    "text": "I felt the heat leave my body. My family would die. I could live, and do what was right. I could be with the person I loved, away from the system I hated, the system that had taken my brother from me. I could go against the country that was killing innocent people, forcing us to kill our own civilians. But if I did that, my parents, the people I did this all for, would die because of that.\n\nThere were two roads in my mind. One that fell down to a quiet forest, life everywhere. Secluded brick, easy sleep, a life well lived. The other was bright, too bright, with three figures waiting to walk it with me. I thought back to the nights in Mexico with Blaine around me, the love I'd felt. And I thought about Pete's arm around me, and pulling away from my mom the day I left for recruitment.\n\nAnd it wasn't even a choice."
+  },
+  {
+    "id": "the-19-club-0cc700d2a7d1",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "chaotic",
+      "dread",
+      "furious",
+      "uncanny"
+    ],
+    "text": "Looking back to the men, three more had fallen. The ones remaining were now scattering, turning wildly in every direction with their guns. Trees were falling down onto the ground, dust was flying, and blood had begun to seep into the soil, and I suddenly realized there were bodies I didn't recognize. Everything was madness. One man tried to run away from a falling trunk but couldn't. In his last moment, he turned his gun and fired into the trunk, an ear piercing cry to the forest."
+  },
+  {
+    "id": "the-19-club-de101a243d89",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "awe",
+      "peaceful"
+    ],
+    "text": "I slowed down and met him on the railing. It went up to a bit over my waist, right at his chest level. He stared at the city below him. I joined. In front of us, there were miles and miles of skylines stretching out to the black horizon line. Hundred and hundred of building and thousands of cars, all glinting light. All of them added up to a light show of tiny twinkles that reminded me of old videos of Christmas trees. There could be a million people in all that I was staring at. It was beautiful."
+  },
+  {
+    "id": "the-19-club-093b11d4e556",
+    "source": "The 19 Club",
+    "year": 2018,
+    "moods": [
+      "awe",
+      "peaceful",
+      "joyful",
+      "intimate"
+    ],
+    "text": "It was beautiful. So beautiful that I could almost forget where we were, under what circumstances she was there. It was just beautiful, and seemed so effortless. Each note lasted just long enough, with the edges of the notes pushing me on to want more. The song built and built, and I closed my eyes, letting the music come alive in my imagination. A world was being created on the stage, and I reveled in it."
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-8648b8af7e8e",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "absurd",
+      "tender",
+      "joyful"
+    ],
+    "text": "Lorenzo kneeled down and met Ezekiel’s eye level. Even in just the two years he’d known Lorenzo, he already seemed so much more beautiful. His beard was growing more each year, he was working out his muscles more, he was sometimes even taking Ezekiel’s advice on what clothes to wear. But there was something else too.\n\n“Hey there,” Lorenzo said, eyeing his body. He smirked at Ezekiel, showing his right teeth, like he was ready to devour something. Ezekiel wobbled a bit. Maybe Lorenzo was brushing more? No, that was insane. Wasn’t the teeth."
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-24e9fd3a7cad",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "absurd",
+      "chaotic"
+    ],
+    "text": "Panicked screams of obscenities and the screech of brakes slammed Ezekiel awake as his head collided into the steering wheel.\n\nHe shook his eyes open and looked up. His car was stopped in the middle of that one two-lane road, and inches from the hood was a hunched over man, picking up jars of... peanut butter? No, almond butter, the top was fancy. Oh no, it was peanut butter - but organic green top peanut butter, the kind you had to stir, the really g- \n\nRight, the guy he almost ran over."
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-1a6eac1dde80",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "absurd",
+      "joyful"
+    ],
+    "text": "“You know, he ran back, right in front of your car,” Lorenzo said.\n\n“What?”\n\n“He dropped, whatever the fuck. And ran straight towards your fancy deathtrap of a car.”\n\n“And you didn’t try to STOP this?!”\n\nLorenzo paused, and shuffled in his seat. “I… wanted to see if the car would work.”\n\nEzekiel stared at Lorenzo.\n\nAnd then they both erupted into uncontrollable laughter.\n\n“REALLY?!” the man screamed. He stormed off."
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-3a1f62acafc5",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "absurd",
+      "uncanny",
+      "dread"
+    ],
+    "text": "“At least one item a day uses products hunted on campus. It’s called the game of the day,” he explained. “Today’s is… huh.”\n\nThe game of the day was blank. There was an info bubble to press. “The game of the day is still currently alive. It will be hunted soon.”\n\n“Guess we’ll come back for dinner or something,” Ezekiel said, sighing in disappointment. His phone buzzed. “Oh! Location notification from Yasmin.”"
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-f7aa35f20b37",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "absurd",
+      "anxious"
+    ],
+    "text": "\"Ugh, I'd need to make reservations for a private room,\" Sammy said.\n\n\"I can do that,\" Ezekiel said. He had no idea how to do that.\n\n\"Okay,\" Sammy said.\n\n\"Great,\" Ezekiel said. \"I'll just take out my phone... and do that.\""
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-7a0f4c2239f4",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "absurd",
+      "ashamed",
+      "anxious"
+    ],
+    "text": "“Cool,” Sammy said, giving two thumbs up. “Which building is it in?”\n\n“Which… building,” Ezekiel repeated back. He held out a finger. Looked through his emails. Why did that not occur to him? It must just be the one they were in. Obviously that was what the system would do.\n\nThe email opened. And his heart closed. Building SS28. SS28. That was one of the skyscrapers on campus, built to house the thousands of employees on staff, as well as a helipad on top for executives to land and take off from. It was over two miles away.\n\n“Umm… it’s not that far…,” Ezekiel said. “By train.”"
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-463d0c359a04",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "defiant",
+      "furious",
+      "bittersweet"
+    ],
+    "text": "“So let’s leave, and you never have to come here again.”\n\nShe considered this for a second then nodded. Ezekiel got up and reached down to help her up. But she got up by herself. He cocked his head in confusion.\n\nAs she stood up and dusted herself off, she met him with cold eyes. “We get out. And then I never speak to you again.” And then she led the way into the building of the inner ring."
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-5fe2fd40fe16",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "absurd",
+      "defiant"
+    ],
+    "text": "With a smile too wide, Ezekiel pulled out the giant chess, tug of war rope, darts, and putting golf.\n\n“This is gonna be our salvation,” Ezekiel said.\n\n“We play lawn game until a helicopter picks us up,” Aisha said deadpan.\n\n“No- Well, that’s not a bad back up plan, actually,” Ezekiel said. “But I was thinking we actually try and escape before the dude everyone thinks is trying to kill us actually stops by to…”\n\n“Kill us,” Aisha said."
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-3c8e4b165850",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "absurd",
+      "chaotic",
+      "ashamed"
+    ],
+    "text": "Lorenzo picked up the phone a moment later, and Ezekiel put him on speaker. “Okay, so I’ve made a reverse rock-climbing wall for everyone to climb down,” Ezekiel said. “Ask people if they think they can do it without dying.”\n\n“Wow. That’s… I see it now,” Lorenzo said. “It was insane to watch you do that. I’ll ask.” He paused and Ezekiel waited. A minute later, Lorenzo’s voice was back.\n\n“I’m hearing a lot of ‘We will definitely die.’”\n\n“Awesome. Okay. Love that I just risked my life to do that.”"
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-3332e0276085",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "tender",
+      "joyful",
+      "hopeful"
+    ],
+    "text": "As far as Ezekiel could tell, it was just what she loved most to do at parties. Scope the scene out, swoop in when people were at their lowest, and bring them back to whatever safety they needed. Not even for the recognition, pretty much all were too far gone to remember. And he’d dug enough to be pretty sure it wasn’t because of some deep-seated trauma of her own. The closest he’d ever gotten to an explanation was “I hate dancing but love seeing people be happy.”"
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-bcec9236de9c",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "joyful",
+      "tender",
+      "intimate"
+    ],
+    "text": "“Not without everyone,” Ezekiel said.\n\n“I’m not-“ Aisha said, protesting.\n\n“I know,” Ezekiel said. She wouldn’t leave her spot. “Then we’ll all dance here.”\n\n“What?” Lorenzo said, tilting his head with an inquisitive smile.\n\n“No way,” Aisha said. “In the trash and recycling section?”\n\n“Together. You guys are my family.”\n\nEveryone paused. Glanced around at each other through the low dark and flashing disco light of the club. But Ezekiel could see the smiles through the shifting shadows, some more drawn than others. And as the music withdrew and held for moment, it clicked.\n\n“Let’s fucking go!!” Lorenzo screamed, and the beat dropped. Feet lifted off the ground and fell, and hips gyrated, and they all danced together in the corner that they owned."
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-f4aa2064e9c9",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "nostalgic",
+      "yearning",
+      "bittersweet"
+    ],
+    "text": "Ezekiel’s throat got stuck. Flashes of dozens of dates they went on played over his vision. Walks down noisy four lane LA roads where it seemed like everything disappeared except for Lorenzo’s breath. Dinners at 3am on the side of the road under taco trucks looking up at the stars. Late mornings in bed that turned into late afternoons, neither of them daring to leave the others side.\n\n“Maybe we could still be that way,” Ezekiel whispered. Wishing. Wishing with everything he had. Why was it so hard ever since he had graduated?"
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-f889bb3a1dab",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "tender",
+      "anxious",
+      "bittersweet"
+    ],
+    "text": "He wished he could just turn around somehow. That any other combination of events had happened. Because the way Lorenzo’s eyes widened when he saw Ezekiel made him feel like this was all a horrible mistake. The stress of their fight compounded with this was too much. Lorenzo ran over to him and he braced himself. Braced himself for Lorenzo to scream, to grab him again, to curse-\n\nLorenzo threw his arms around him and squeezed him closer than he had in weeks. The breath fell out of Ezekiel and he felt himself become weightless for a moment in the man’s arms. Just feeling the rough hairs of Lorenzo’s beard against his cheek, the heat of his body against his.\n\n“I’m not going to let anything happen to you. Okay?” Lorenzo said in his ear."
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-01475da383e6",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "lonely",
+      "bittersweet"
+    ],
+    "text": "Though they walked together out of the parking garage, their footsteps seemed miles apart."
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-e9e1be02d074",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "nostalgic",
+      "lonely",
+      "bittersweet"
+    ],
+    "text": "Lorenzo let go. Ezekiel pushed away, staring at him. Flashbacks to college took over his mind. When he and Jazmin would get up on dirty party tables in underlit duplexes and perform a whole dance to that inside joke for Lorenzo. How Lorenzo would watch him like he was a million dollar burlesque performer even though he had been tripping over beer cans and coffee table books on “caturdays.”\n\nThat hadn’t been so long ago, right?"
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-9ab886b0d2a5",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "lonely",
+      "ashamed",
+      "bittersweet"
+    ],
+    "text": "Nothing could be said now though. You had to have someone listen if you were going to talk."
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-7ecd5d09d32f",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "yearning",
+      "anxious",
+      "bittersweet"
+    ],
+    "text": "“You don’t get it, do you?” Lorenzo asked. Ezekiel waited for more, but Lorenzo’s eyes were glass.\n\n“Then show me,” Ezekiel said, begging.\n\n“I have.”\n\nThe distance. The casual cruelty. The marks on his arm. Was that what he meant? Was that as good as it was going to get now?\n\n“So that’s it?” Ezekiel asked.\n\n“That’s all I got,” Lorenzo said.\n\nThat was as good as it was going to get. So maybe nothing was better."
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-96258b73a2f2",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "lonely",
+      "bittersweet",
+      "dread"
+    ],
+    "text": "Lorenzo started to walk off, leaving Ezekiel behind. He felt the wind blow on his back like ice. Watching Lorenzo’s broad, muscular back that used to symbolize strength and security. Now it was just a wall that was better left alone."
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-2a02151fefd2",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "dread",
+      "uncanny",
+      "bittersweet"
+    ],
+    "text": "“It’s such an honor to meet you Sir, I hope you don’t mind me saying, it’s truly a dream,” she said.\n\nThat could be Ezekiel in 20 years. He imagined himself in her position. Able to meet Victor.\n\nVictor studied her for a moment. “I supposed you will be the example I must make.”\n\n“What was that? My daughter is a huge fan, huge, can we take a photo? I know I shouldn’t ask but she is really wanting to meet you.”\n\nThat so easily could have been him. He couldn’t stop the smile.\n\nVictor placed his hand on her shoulder like a father. She quieted down. His eyes turned blank, and an odd smile appeared on his face. “Goodnight little rabbit,” Victor said. And then, he took the gun with his other hand, and pressed it to her chest, and then there was the loudest sound Ezekiel had ever heard."
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-31c7a6a9f100",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "chaotic",
+      "anxious",
+      "dread"
+    ],
+    "text": "“Jazmin?... Max?! Aisha?! SAMMY!!!” he screamed out each name with more and more intensity but it was like throwing sand into the ocean. A crush of screams came back, hundreds layered on top of one another. It was incomprehensible."
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-667be3a865ec",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "dread",
+      "grief",
+      "anxious"
+    ],
+    "text": "Then, he snapped back and felt his mind return. He opened his phone and searched.\n\n\"Okay, it's loading,\" Ezekiel said. \"Just give me a second...\"\n\nHis eyes scanned the text, his heart sank. He didn't know how to tell everyone.\n\n\"She's got fresh air, which is the best thing,\" he said, trying to force a smile.\n\n\"Guys... I don't feel a heartbeat,\" Aisha said in a voice no louder than a whisper.\n\n“Does anyone know CPR?” he asked.\n\nSilence.\n\n\"There’s… there's nitrate treatment,\" he said.\n\n\"There's no heartbeat,\" she said louder.\n\n\"But that's... more advanced.\"\n\n\"THERE'S NO HEARTBEAT!\" she screamed.\n\nHe stopped."
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-415b78d3ab32",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "uncanny",
+      "dread",
+      "chaotic"
+    ],
+    "text": "Jazmin moved to get a closer look, when her shoe squeaked against the plastic of the ground. Its echo vibrated against the wall and seemed to somehow magnify until it reached the floor.\n\nAll of a sudden, thirty heads turned and stared right at them.\n\nEzekiel felt his heart stop.\n\n\"Guys...\" he said.\n\nThe mob stared without doing anything.\n\nAnd then, in a single motion, thirty people all began to sprint towards them."
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-b9d08c0b1d70",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "defiant",
+      "furious",
+      "bittersweet",
+      "intimate"
+    ],
+    "text": "\"Eze!\"\n\nEzekiel turned, fighting back tears, or screaming, or what he didn't even know anymore.\n\n\"Why?\" Ezekiel asked. \"Why are you calling me that?\"\n\n\"What?\" Lorenzo asked, taken aback.\n\n\"Why do you still call me that pet name?\"\n\n\"Look, you need to stay here so I can keep you safe.\"\n\n\"You don't get both,\" Ezekiel said with venom on his lips. \"You don't get to keep me safe and break my heart. You don't get to divorce me and call me Eze. You picked. You chose to leave me. So leave, Lorenzo. Let me leave.\"\n\nEzekiel pushed the door open.\n\n\"HEY!\" Lorenzo screamed. But Ezekiel ran into the hallway, more ready to face the mob than the darkness of that room."
+  },
+  {
+    "id": "so-your-boss-is-a-serial-killer-741e370130b1",
+    "source": "So, Your Boss is a Serial Killer",
+    "year": 2023,
+    "moods": [
+      "chaotic",
+      "dread",
+      "anxious"
+    ],
+    "text": "Then, all of a sudden, the crowd couldn’t move and it was like cars hit him. “STOP PUSHING, STOP!” Ezekiel screamed. People were yelling all around him the same thing. He couldn’t breathe. At all. Jazmin was screaming in pain. Ezekiel held his head up towards the sky, closed his eyes, and waited. The last of the air left his lungs. Even in the dark of his eyes closed, his vision turned red."
+  },
+  {
+    "id": "the-full-story-of-mario-9883c4ffaa33",
+    "source": "The Full Story of Mario",
+    "year": 2005,
+    "moods": [
+      "absurd",
+      "joyful"
+    ],
+    "text": "“How is she doing?” Pineapple said.\n\n“Both are doing just fine” the nurse said. “In fact I think she done!”\n\n“Wow!” Pineapple said. “ But it was only 9 lines [of text]!”\n\n“It was are quickest birth ever,” the nurse said."
+  },
+  {
+    "id": "the-full-story-of-mario-82c18cfaba19",
+    "source": "The Full Story of Mario",
+    "year": 2005,
+    "moods": [
+      "absurd"
+    ],
+    "text": "Mario had an amazing ability to pronounce the \"i\" and did it as much as possible. Luigi on the other hand doesn't know \"o\" so he uses \"u\"!\n\nBut whenever way they talk it didn't change the fact that they would eventually talk like-a this-a! But I'm getting off topic, and my sentence fluency is getting horrible."
+  },
+  {
+    "id": "the-full-story-of-mario-ee1f5295510a",
+    "source": "The Full Story of Mario",
+    "year": 2005,
+    "moods": [
+      "absurd",
+      "chaotic"
+    ],
+    "text": "Little Baby Bowser (for more effect do it in a cute baby voice) was doing well. Most Koopa’s his age didn’t have a shell and surely didn’t have spikes on it. It was quite a mystery actually, like when a baby is born without an arm. But this baby was born with something extra. Mrs. Eink consulted a doctor about it, but all he could say was “Well, I guess the baby’s just growin’ fast”. And that cost $300."
+  },
+  {
+    "id": "the-full-story-of-mario-dd700a8730e8",
+    "source": "The Full Story of Mario",
+    "year": 2005,
+    "moods": [
+      "absurd",
+      "defiant"
+    ],
+    "text": "It's a good job and pays very well. How much you ask? That's rude to ask how much someone is payed, find some manners. And don't ask Mrs. Pimper's age, weight or anything else because that is also rude. Anyway now you made me loss my train of thought."
+  },
+  {
+    "id": "the-full-story-of-mario-822b7cdbd10e",
+    "source": "The Full Story of Mario",
+    "year": 2005,
+    "moods": [
+      "absurd"
+    ],
+    "text": "Over at Peach's house everything was great. Peach was well feed and Daisy would come every week to play. No drama to mention here.\n\nPS Chapter 4 will be more dramatic."
+  },
+  {
+    "id": "the-full-story-of-mario-ccbddd020fe9",
+    "source": "The Full Story of Mario",
+    "year": 2005,
+    "moods": [
+      "chaotic",
+      "absurd",
+      "joyful"
+    ],
+    "text": "“Guh?” she said.\n\n“GA!” Baby Peach screeched.\n\n“Guh, gi!” “Go gu ga!” “Wa, ev, ya, gi!”\n\nthe newborns were already screeching at each other the minute Daisy came in. In another hour they were snoozing."
+  },
+  {
+    "id": "avatar-the-last-hope-5010f9db19f8",
+    "source": "Avatar: The Last Hope",
+    "year": 2007,
+    "moods": [
+      "absurd",
+      "joyful",
+      "tender"
+    ],
+    "text": "\"Ritchie, you think everything's cool.\" Haruku muttered. It was true. Like last week Ritchie spend five hours looking at a bug . Or tat one time he spend the whole day trying to copy Haruku's waterbending. Or maybe that time he looked in the cave for a day and then got lost for two. Haruku was used to his \"over curiosity\" and made a special effort not to follow him or get tempted by whatever he said."
+  },
+  {
+    "id": "avatar-the-last-hope-9c31ea112cc0",
+    "source": "Avatar: The Last Hope",
+    "year": 2007,
+    "moods": [
+      "awe",
+      "hopeful"
+    ],
+    "text": "He lifted one finger and felt the connection instantly. He was the water, and the water was him. He lifted his hand. The water obeyed him like the most loyal Squirrel-Dog."
+  },
+  {
+    "id": "chaos-theory-the-zombie-effect-3e29a10a2cc6",
+    "source": "Chaos Theory: The Zombie Effect",
+    "year": 2010,
+    "moods": [
+      "dread",
+      "anxious"
+    ],
+    "text": "My fingers hopelessly fiddled with the root, my heart was screaming inside my chest. “I’m going to die,” I thought. “No. I’m not going to die…” A brutal realization came over me as I saw one running toward me. “I’m not going to die… I’m going to become one…of them.”"
+  },
+  {
+    "id": "chaos-theory-the-zombie-effect-708af9756899",
+    "source": "Chaos Theory: The Zombie Effect",
+    "year": 2010,
+    "moods": [
+      "lonely",
+      "yearning",
+      "nostalgic"
+    ],
+    "text": "“I wanna go home” I whispered to myself, and suddenly tears were burning up in my eyes. I didn’t realize until now how much I wanted to leave this damned church. I had only been here for a week, but it felt like a lifetime. “I wanna go home” I whispered again, hoping for Ruby Slippers to drop in front of me, whisking me away from here. “I wanna go home….”"
+  },
+  {
+    "id": "chaos-theory-the-zombie-effect-6a90af27a986",
+    "source": "Chaos Theory: The Zombie Effect",
+    "year": 2010,
+    "moods": [
+      "ashamed",
+      "lonely",
+      "yearning"
+    ],
+    "text": "When I was younger, I thought makeup was gross, and I still do. But if you want to be accepted in high school, it’s a must. Slowly, I paint over myself, masking the bags under my eyes, masking the scars on my face. Transforming myself into a normal, stuck-up, popular girl. Someone I could never be on my own."
+  },
+  {
+    "id": "chaos-theory-the-zombie-effect-10b8fec4279f",
+    "source": "Chaos Theory: The Zombie Effect",
+    "year": 2010,
+    "moods": [
+      "bittersweet",
+      "lonely",
+      "hopeless"
+    ],
+    "text": "“Antonio..?” she says softly, tilting her head away. “Remember when we were in high school, and we had that dream that I was going to go to college…and you were going to get a good job. And we would have enough money, and live happy forever after, like in a fairy tale? Remember that?”\n\n“Yeah,” I say carefully.\n\n“What happened? What happened to that dream we had?” She asks, and I see that she’s holding back tears.\n\n“We…we woke up from it.”"
+  },
+  {
+    "id": "chaos-theory-the-zombie-effect-f7a7b28d67e6",
+    "source": "Chaos Theory: The Zombie Effect",
+    "year": 2010,
+    "moods": [
+      "absurd",
+      "defiant"
+    ],
+    "text": "“Well, we’ll need more than then won’t we? If I remember correctly, there is a guns shop about three blocks away, the opposite direction of the grocery store.”\n\n“Heh, what kind of nun are you? I may not know much about nuns, but I’m pretty sure they’re not supposed to be telling me where I can get “unholy” guns.”\n\n“I suppose you’re right. But that doesn’t change the fact that we’ll need them. I suggest you split into two groups tomorrow.”"
+  },
+  {
+    "id": "one-of-those-things-3303e281ac28",
+    "source": "One of Those Things",
+    "year": 2014,
+    "moods": [
+      "absurd"
+    ],
+    "text": "The words hit Stiles like a truck made out of bricks that was also carrying bricks. Like a bricked brick truck. With bricks."
+  },
+  {
+    "id": "one-of-those-things-c1baaf5ada9e",
+    "source": "One of Those Things",
+    "year": 2014,
+    "moods": [
+      "absurd",
+      "anxious",
+      "ashamed"
+    ],
+    "text": "\"Okay. Did you have a lock on it?\" Derek walked over, got a binder of some sort, and opened it up.\n\nThe dreaded question. Stiles remembered the person working here offering him a lock for cheap, and Stiles saying he already had one.\n\n\"A what?\" Stiles said, raising his eyebrows to play dumb.\n\n\"A padlock,\" Derek said flatly.\n\n\"Well you know, there's a funny story about that.\"\n\n\"So no,\" Derek said, a tinge of annoyance coming out. He started to write something down in the binder."
+  },
+  {
+    "id": "one-of-those-things-15650ca83355",
+    "source": "One of Those Things",
+    "year": 2014,
+    "moods": [
+      "intimate",
+      "yearning",
+      "awe"
+    ],
+    "text": "Once he got near Derek, he stopped for a moment and watched him. Whatever Derek was doing, it was artful. The way his hands moved with both grace and strength reminded Stiles of ocean waves crashing onto the sand. Quick and sudden, but with purpose. It put Stiles in a daze. He leaned in to get a better look. Before he realized what he's done, he felt his arm brush up against Derek's back."
+  },
+  {
+    "id": "one-of-those-things-4f6d7b3f20e2",
+    "source": "One of Those Things",
+    "year": 2014,
+    "moods": [
+      "tender",
+      "absurd",
+      "joyful"
+    ],
+    "text": "\"Your bike got stolen?!\" Scott immediately sat up, looking ready to do anything to help. Whenever Stiles, or anyone that Scott was even remotely friends with, had a problem, Scott had to help. It was like some sort of addiction to heroics. One time Stiles offhandedly said he'd lost his purple Avatar pencil, and three weeks later Scott handed it to him, with a casual \"I found it yesterday in the parking lot.\" Like that amount of dedication was normal for humans to possess. It was sickening."
+  },
+  {
+    "id": "one-of-those-things-77b996c9449a",
+    "source": "One of Those Things",
+    "year": 2014,
+    "moods": [
+      "lonely",
+      "yearning",
+      "intimate"
+    ],
+    "text": "After class, Stiles noticed two students holding hands on the way out. It wasn't like they were doing anything, just walking and laughing with hands clasped together. But he couldn't take his eyes off. For a instant, Stiles let himself wonder what that felt like."
+  },
+  {
+    "id": "one-of-those-things-489cb31fad8f",
+    "source": "One of Those Things",
+    "year": 2014,
+    "moods": [
+      "absurd",
+      "ashamed",
+      "yearning"
+    ],
+    "text": "\"Let's look at that next time, honey. It's been exactly two hours. Good time to stop.\"\n\n\"Oh, sure,\" Stiles said, trying to smile back. Honey. She had called him /honey/.\n\n\"See you next time, Steven.\" And with that, Lydia got up and left.\n\n\"Uh, it's actually.... Ah fuck it.\" Stiles collapsed into his seat. Lydia Martin, literally perfect human being, had called Stiles Stilinski honey. Out loud. To him. Condescendingly, sure. But she still said it. Nothing else but that mattered."
+  },
+  {
+    "id": "one-of-those-things-b6dfc7d35615",
+    "source": "One of Those Things",
+    "year": 2014,
+    "moods": [
+      "absurd"
+    ],
+    "text": "Psych was one hundred million times better than Bio. Which meant it was okay."
+  },
+  {
+    "id": "one-of-those-things-8ea25510f65d",
+    "source": "One of Those Things",
+    "year": 2014,
+    "moods": [
+      "furious",
+      "absurd",
+      "defiant"
+    ],
+    "text": "\"Scott. Do you not realize what day it is?\"\n\n\"Friday, I know-\"\n\n\"FRIDAY. Friday is not get-wasted-and-fist-pump-at-a-creepy-frat-party night. It is drunk League of Legends night.\"\n\nScott sighed. \"I know. But Kira and I thought it'd be fun to change up the pace.\"\n\nStiles wanted to hit something. This couldn't be happening."
+  },
+  {
+    "id": "one-of-those-things-b4d5fb284bf8",
+    "source": "One of Those Things",
+    "year": 2014,
+    "moods": [
+      "joyful",
+      "tender",
+      "intimate"
+    ],
+    "text": "But Stiles was not about to give up. He lunged at the ADC, screaming for Scott to blow everything he had. Scott threw every spell, like two of them connected, Kira kinda stood there and tried to auto attack, and Stiles button mashed until TRIPLE KILL displayed across the screen. He haphazardly threw his irl hand towards Scott, and felt their hands impact with the force of victory. In that instant, Stiles could literally feel their friendship. It was like, in that moment, everything was okay."
+  },
+  {
+    "id": "one-of-those-things-f3d6bb48f189",
+    "source": "One of Those Things",
+    "year": 2014,
+    "moods": [
+      "chaotic",
+      "dread",
+      "uncanny"
+    ],
+    "text": "Then suddenly I heard a cry, an ear splitting, fear-inducing cry like fingers scraping a chalkboard. The glass in the window shattered with a crash and I saw a rotten, pale hand grasping the barricades. The zombie had gotten its hand through a space between the planks of wood. I screamed, and stumbled back into a row of seats. Antonio fired a shot at the window and I heard another cry, but this was a whimpering, pitiful cry. It made me think for a second that it wasn’t a monster trying to eat my brains."
+  },
+  {
+    "id": "full-stop-78921a7272a8",
+    "source": "FULL STOP.",
+    "year": 2017,
+    "moods": [
+      "absurd",
+      "defiant",
+      "joyful"
+    ],
+    "text": "“What do you think the chances of survival are?” Oz asked, adjusting the harness around his waist.\n\n“Pretty good. The collapse was nearly a week ago,” Leona said. She was staring down at her phone, quietly tapping and swiping.\n\n“Can we say thirty percent chance, just to make it exciting?” Oz turned to Leona, shining his teeth at her in an overdone smile he had perfected long ago."
+  },
+  {
+    "id": "full-stop-341a6d5a96ed",
+    "source": "FULL STOP.",
+    "year": 2017,
+    "moods": [
+      "tender",
+      "intimate",
+      "joyful"
+    ],
+    "text": "Leona let out a sigh most people would think meant annoyance. But Oz spent enough time with her to hear the soft giggle it was trying to hide. “Whatever makes you happy Oz.”"
+  },
+  {
+    "id": "full-stop-59b0da9bd9b4",
+    "source": "FULL STOP.",
+    "year": 2017,
+    "moods": [
+      "nostalgic",
+      "lonely",
+      "bittersweet"
+    ],
+    "text": "He couldn’t help but wonder what this room would have become if it wasn’t for the war. Every abandoned object, every cobweb covered wall was an unfinished story. The molding sofa in front of him could have been held a family while they watched TV together. The center space could have held a ballroom. This room could have been a home."
+  },
+  {
+    "id": "full-stop-3c25df22e3d7",
+    "source": "FULL STOP.",
+    "year": 2017,
+    "moods": [
+      "anxious",
+      "lonely",
+      "dread"
+    ],
+    "text": "Each floor felt larger than the last, as if they were feeding off of Oz's exhaustion."
+  },
+  {
+    "id": "full-stop-8787a835e7c7",
+    "source": "FULL STOP.",
+    "year": 2017,
+    "moods": [
+      "tender",
+      "uncanny",
+      "anxious"
+    ],
+    "text": "\"Come on Caitlyn. It's you. You're not a cat, you're a human.\"\n\n\"RAWR.\" She jumped up suddenly, staring Oz in the face. Hidden beneath the danger, there was fear in her eyes. He could see the little girl trapped, trying to figure out what was going on in her head.\n\nOz took a breath, then reached out him hands to her. He gently took her hands in his. \"It's ok,\" he said.\n\nA tear fell down her face slowly as she purred softly. Oz tried to keep hold of her as he felt her claws dig into his skin.\n\n\"You're human. You're real. And I'm here.\""
+  },
+  {
+    "id": "full-stop-4e500942deda",
+    "source": "FULL STOP.",
+    "year": 2017,
+    "moods": [
+      "uncanny",
+      "dread",
+      "tender"
+    ],
+    "text": "\"Hey Leona? Mother? I think I found something...\"\n\n\"Big?\" Mother Teresa asked.\n\n\"No, not really.\" The whole room’s gravity seemed to be congregating at the scene past Oz’s feet. Oz looked back down at the huddled figure, motionless on the dirty mattress. Sleeping.\n\n\"Well?\" Leona asked.\n\n\"I…I found a kid.\""
+  },
+  {
+    "id": "full-stop-60125fe2f71f",
+    "source": "FULL STOP.",
+    "year": 2017,
+    "moods": [
+      "ashamed",
+      "lonely",
+      "bittersweet"
+    ],
+    "text": "At 20, he was too young to be feeling like he was 20 years into marriage. He was too young to be thinking he was too young. Just the thought disgusted him."
+  },
+  {
+    "id": "full-stop-19eac16dec8a",
+    "source": "FULL STOP.",
+    "year": 2017,
+    "moods": [
+      "lonely",
+      "ashamed",
+      "intimate",
+      "bittersweet"
+    ],
+    "text": "Oz took a bite of the egg, and tried to think of something to say. \"Your snoring was like an ambient electro song this morning.\"\n\nMichael instantly got flustered. It really wasn't a good look on him.\n\n\"Sorry if I slept in too much'\" Michael said. \"I know you have work today.\"\n\nOz tried not to sigh in disappointment. All he was trying to do with his remark was get Michael to play ball with him, so to speak. To take his sarcasm and throw it right back. But Michael was just too nice for sarcasm."
+  },
+  {
+    "id": "full-stop-4ccbd244431e",
+    "source": "FULL STOP.",
+    "year": 2017,
+    "moods": [
+      "chaotic",
+      "dread",
+      "uncanny"
+    ],
+    "text": "Crack. Oz looked down. And noticed the ground beneath him had collapsed.\n\n\"Cait!\" Oz cried in a panic, trying to move. But it was too late.\n\nWind slashed him as his sight instantly fell into darkness. Dizzying glimpses of light from his helmet flashed. On instinct, he grabbed the hook, aimed for something even he didn't know, and pressed the button to launch."
+  },
+  {
+    "id": "the-wreck-room-c53178a6de8e",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "yearning",
+      "intimate",
+      "awe"
+    ],
+    "text": "He was broad, big boned but more than that he gladly took up the space of his body and more. His legs were spread wide like he was claiming territory and his shoulders out as he called me over. Even though he was a freshman, he had an unkept beard that looked like he’d hacked it off a few weeks ago and then forgot about it, and short dark brown hair that somehow still looked unkept. And his eyes… I instantly trusted them, all over again. "
+  },
+  {
+    "id": "the-wreck-room-77419168a77a",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "tender",
+      "intimate",
+      "yearning"
+    ],
+    "text": "And then he talked and talked. Just watching his lips move, hearing the cadence of his rambling stories. Time seemed to stop. There, it was just his face, his words. Things felt safe.\n\nI could listen to it forever."
+  },
+  {
+    "id": "the-wreck-room-93b2f0367808",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "anxious",
+      "tender",
+      "hopeful"
+    ],
+    "text": "“I don’t know if I’ll survive college. I feel like it’ll be so big I’ll just.. disappear.”\n\nAnd Eli had turned to me, his brows wide and a big grin on his face. “What?! That’s the stupidest thing I’ve ever heard! Room with me. I’ll make so much noise, you won’t be able to disappear if you tried!”\n\nAnd the buildings came back to brown as my heart began to slow."
+  },
+  {
+    "id": "the-wreck-room-56b99deee2b6",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "yearning",
+      "anxious",
+      "intimate"
+    ],
+    "text": "Now, I stared at that boy. One thought pulsing through me, begging to be spoken.\n\nDo you remember me?\n\nDo you think I’ve forgotten you?"
+  },
+  {
+    "id": "the-wreck-room-b350a5d95895",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "ashamed",
+      "anxious",
+      "intimate"
+    ],
+    "text": "Eli, for the first time, seemed to shrink. His broad shoulders hit into my frame as he pushed past me to shut the door behind me before I had even stepped out of the way. And then, he got on his knees in front of a pile of clothes, and a too loud laugh, so unlike any I’d heard from him, thunked against the wall as he turned to me.\n\n“How do I even have this much stuff, right?” he asked, trying to put his usual smirk on."
+  },
+  {
+    "id": "the-wreck-room-af94629232eb",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "tender",
+      "bittersweet",
+      "compassionate"
+    ],
+    "text": "I squatted down, silent. As I watched him… not clean; as I watched him push things from sight, I noticed. It wasn’t all just chaos. There had been systems, attempts. A pile of jeans in a corner, that had been then been overtaken by papers, so then there was a new pile of jeans that had emerged on his desk chair, but that had fallen over, because there were also tissues on the chair. It wasn’t that there was zero effort. The problem was nothing had stuck."
+  },
+  {
+    "id": "the-wreck-room-25c202ce90bb",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "peaceful",
+      "relieved",
+      "intimate"
+    ],
+    "text": "Cleaning was rhymical. Steady. All the bottles in one bag. All the plates in another. All the clothes in a third, clearly marked so as not to be accidentally thrown out. Laptop in bookbag, bookbag in closet. Books organized by topic, on shelves. Papers gathered all together. Then sorted by class, then by date, then paperclipped to separate. Then finding a paperclip, now that took a long time. My heartbeat slowed and my mind became that wonderful focused blank. Not the usual endless list of worries. Just: object, where does it go, put it there, next object."
+  },
+  {
+    "id": "the-wreck-room-8e9b3ec5bac1",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "anxious",
+      "ashamed",
+      "absurd"
+    ],
+    "text": "Between classes, I spent my day biking my things back and forth between my old dorm and the house. I could’ve texted Eli for his car, done it all in one trip… My breath came fast whenever that logical thought hit me. So I took dozens of trips with just my backpack each time. It’s good exercise, I told myself."
+  },
+  {
+    "id": "the-wreck-room-981795846af2",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "tender",
+      "joyful",
+      "anxious"
+    ],
+    "text": "The first thing wrong: the door was open. And standing in it, was Eli. Just staring. My stomach dropped, and I realized that I had made my first, and maybe last, mistake.\n\nI’d gone too far, and way too fast. I’d done it all wrong. All his clothes were in a trash bag. The spotless floors, organized shelves, full closet, I had put things where they didn’t belong to him, threw away things that were sacred. Eli turned to me, and my head swirled – I could fish the bags out of the dumpster, go through each item, I could remember if I really- “I could kiss you right now!” Eli said, breaking into a huge smile.\n\nHe pushed me inside his room, and just stared. “See?!” he said, arms gesturing like an Italian. “This is why singles don’t work. This is why no one should be alone. This is… this is just… Are you hungry for dinner?”"
+  },
+  {
+    "id": "the-wreck-room-0e5aec1f64a9",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "joyful",
+      "tender",
+      "hopeful"
+    ],
+    "text": "“Oh, and… make yourself at home.”\n\nAnd then he ran off again as they continued arguing. I touched my face, wondering if it hurt because it’d been so long since I smiled this much."
+  },
+  {
+    "id": "the-wreck-room-3e3580161f06",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "absurd",
+      "tender",
+      "joyful"
+    ],
+    "text": "Half a block later, I caught up to him. We were on what, the other side of campus? A mile away? I didn’t even know. I had to help somehow. Eli turned as he saw me lean down to grab the mattress.\n\n“Oh! Alright man, you got this!”\n\nI lifted with all my might… and barely got a corner up. My back felt like it could split in two. Eli stalled, waiting for me. With a thud, the mattress fell back onto Eli, and my feet slunk behind him.\n\n“Alright, man, okay. You don’t got this, all good!”"
+  },
+  {
+    "id": "the-wreck-room-d962622fd36b",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "tender",
+      "absurd",
+      "bittersweet"
+    ],
+    "text": "By the time Eli had literally hauled the mattress to Kappa, through the wreck room, past some confused cheers, and up the stairs, his entire body was drenched in a cold sweat. The only spot the bed could realistically fit was right next to Eli’s, with maybe a few inches of space between the two for him to get up without stepping on me. With a resounding thud, our tiny single was shrunk in half. There wasn’t even a way to pull the desk chair out anymore. But there was a used, bare, frameless mattress plopped at an awkward angle. It was the sweetest thing I’d ever seen."
+  },
+  {
+    "id": "the-wreck-room-53556403cf44",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "tender",
+      "intimate",
+      "peaceful",
+      "hopeful"
+    ],
+    "text": "Tonight, I felt the safest I’d been here falling asleep next to this stranger.\n\nAs I lay down, my arms felt a soft pillow and a comforter in the middle of the mattress. I poked my head up to Eli’s bed level, but I already heard soft, slow breaths. Better to hide my smile in the dark anyway.\n\nStaring up at the ceiling, the muffled sounds from the wreck room reverberated to us. The musky scent of Eli’s sweat. The cool white of the moon on my left, the warm yellow light of the hallway poking in on my right. I tried to focus on those, until the protruding thoughts softened to sleep."
+  },
+  {
+    "id": "the-wreck-room-ffe4a5cc9052",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "absurd",
+      "tender",
+      "reassuring"
+    ],
+    "text": "“Hey. Take a walk,” Eli said, a hand on my shoulder. “I fucked up. Not you. This pizza thing, it’s just pizza you know, it’s not like I’m delivering vaccines to starving orphans who need pizza vaccines. I’ll get yelled at, I’ll get some bitch work, Curly will tap his fingers together or cackle or some shit, the world will turn.”"
+  },
+  {
+    "id": "the-wreck-room-a4f09cb9a129",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "furious",
+      "dread",
+      "ashamed"
+    ],
+    "text": "“Fuck you,” Curly said, snarling.\n\n“I,”\n\n“Get the ice.”\n\nPaul said-\n\n“Shit for brains.”\n\nPlease, just, I think…\n\n“NOW.” His hand collided with my chest."
+  },
+  {
+    "id": "the-wreck-room-604bcd526783",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "peaceful",
+      "hopeful",
+      "intimate"
+    ],
+    "text": "My fingers danced around my guitar strings as I rested on one of the punctured, mysteriously crunchy bean bags. Playing anything and nothing, just to hold the guitar and strum it. It was like putting on a favorite sweater. I hummed along a melody, closed my eyes, and let every sense other than sound and touch fall away.\n\nJust six strings, 12 notes, but infinite possibilities. Any other time that would’ve paralyzed me, but something about music made that calming. "
+  },
+  {
+    "id": "the-wreck-room-1c9021ad329a",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "absurd",
+      "joyful",
+      "tender"
+    ],
+    "text": "“Bro, you’re frickin’ Bruce Springsteen?!”\n\nMy eyes opened.\n\nEli was staring down at my guitar like I was holding a pound of cocaine.\n\n“Uh… I mean, I can noodle.”\n\n“I woke up cuz I needed to piss buckets, and was like, why am I hearing the songs of angels from downstairs? So I went down. Because you know, I’m religious. I wanna meet angels.”\n\nI nodded. Made sense so far."
+  },
+  {
+    "id": "the-wreck-room-12fc24527433",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "intimate",
+      "yearning",
+      "anxious",
+      "uncanny"
+    ],
+    "text": "I felt the tug of a smile on my face. Closing my eyes and letting my chords fall under his words like beams on a bridge.\n\nEventually, Theo called me in. I opened my eyes to the image of Eli staring at me.\n\nHis mouth was just slightly open, and… his eyes. They were planets, wide and orbiting me and so deep. Brows slightly downturned and cheeks flushed like a sunrise red. For a moment, our gaze met in silence.\n\nThen, he snapped away. Hacked loudly, sending bits of spit flying onto the ground. “Fuck, I think I’m still drunk,” he said like he was announcing it on stage, and stretched to the sky, scratching his armpit hair with a laugh."
+  },
+  {
+    "id": "the-wreck-room-66801bceddd1",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "dread",
+      "furious",
+      "dehumanized"
+    ],
+    "text": "“NOW.” His hand collided with my chest.\n\nI stumbled back, my shoes falling over the grass in short panicked steps. His eyes were beyond seeing me as a friend to ask, beyond a worker to tell, beyond even a kid to demand. It was the look of an owner whose animal had bucked. I braced myself for a hit to the face."
+  },
+  {
+    "id": "the-wreck-room-10211c1ada7f",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "lonely",
+      "peaceful",
+      "bittersweet"
+    ],
+    "text": "I did the work. I finished their chores. Then, from the corner of an oak closest to the parking lot, the truck and dirt steadied me as I watched the rest of the party unfold.\n\nPeople drank, played games, talked, shouted, blasted music, drank a lot more, and then, eventually, left. My tree swayed in the breeze. Its roots dug deep, holding it to this Earth no matter how much the wind or rain or thunder tried to tear it away. That felt real."
+  },
+  {
+    "id": "the-wreck-room-c4f5484ab126",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "dread",
+      "uncanny",
+      "ashamed"
+    ],
+    "text": "“It’s safe, right? You did do a good job?”\n\nI felt my chest tighten. Either answer I chose felt like a death sentence. Like pulling a lever that all led to the same fall. Soft chants of “eat it, eat it, eat it” started to rise up from corners of the room.\n\nPrez tilted his head just a degree or two. “Don’t act weird. It’s a compliment. We’re complimenting you.”"
+  },
+  {
+    "id": "the-wreck-room-45ffaa9bcf21",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "bittersweet",
+      "intimate",
+      "lonely"
+    ],
+    "text": "The crowd left with him. I knelt down next to Eli with a broom and began to sweep up the mess. Now that I was close to him, I could hear his breathing. Heavy and sharp.\n\nWe both went back to our room. I wrote out chemistry equations, Eli ranted about his opponents on Fortnite. And we both pretended nothing was broken."
+  },
+  {
+    "id": "the-wreck-room-fd4f751a3c5a",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "defiant",
+      "ashamed",
+      "lonely"
+    ],
+    "text": "The sunlight streamed through the corners of our dented shades, and I was staring up at Eli’s foot as it dangled at a 45-degree angle off his bed. For a moment, the musky sock, the chipped ceiling, the dented shades, none of it bothered me. This was where Eli wanted me.\n\nThen I rolled over, and remembered. Images of last night, the kitchen, scrubbing until my fingers wrinkled, and all those eyes staring straight forward. The laughter. Something felt like it was coming up from my throat. Breathe a scowl into my pillow. I had just stood there. I always just stood there.\n\nI pushed out of bed, flipped through hangers in the closet, stole a glance at Eli’s drooling face, and then walked out of the frat house."
+  },
+  {
+    "id": "the-wreck-room-58c5e9c8dc36",
+    "source": "The Wreck Room",
+    "year": 2025,
+    "moods": [
+      "peaceful",
+      "hopeful",
+      "bittersweet"
+    ],
+    "text": "Campus was relaxed. It was Sunday. Hurried steps and bikes were traded in for frisbees and picnic blankets on grass.\n\nThe fairway where the org set-up had been was quiet. I remembered the bustling life that day, the day Eli had called to me. I had felt seen for the first time since coming here. It’d only been a few weeks ago that I had joined.\n\nNothing was permanent."
+  }
+];
+// A passage may have unseen, legacy/internal mood tags as well; only visible
+// mood IDs create clickable clouds. Do not duplicate entries for each tag.
+// ── DISCOVERY ENGINE ──────────────────────────────────────────────────────
+// The browser owns the progress. No signup, network request, cookies or API.
+// Save by stable ID: sorting/editing the passage list won't scramble progress.
+const STORAGE_KEY='the-playground.prose-mood-cloud.discoveries.v1';
+const BIRTH_YEAR=1995;
+const byId=new Map();
+const byMood=new Map(moods.map(m=>[m.id,[]]));
+for(const item of PASSAGE_LIBRARY){
+ if(!item || typeof item.id!=='string' || !item.id.trim()){
+  console.warn('Skipping passage with no stable id',item);continue;
+ }
+ if(byId.has(item.id)){console.warn('Duplicate passage id (skipped):',item.id);continue;}
+ if(typeof item.text!=='string'){console.warn('Missing text:',item.id);continue;}
+ byId.set(item.id,item);
+ for(const tag of new Set(item.moods||[]))if(byMood.has(tag))byMood.get(tag).push(item.id);
+}
+// Passages without any of the visible mood tags are not discoverable in the
+// cloud. They are deliberately excluded from the denominator until retagged.
+const availableIds=[...new Set([...byMood.values()].flat())];
+const availableSet=new Set(availableIds);
+let saveAllowed=true;
+function cleanArray(value,allowed){
+ return Array.isArray(value)?[...new Set(value.filter(v=>typeof v==='string'&&allowed.has(v)))]:[];
+}
+function loadProgress(){
+ let saved={};
+ try {saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}')||{};}
+ catch(e){saveAllowed=false;saved={};}
+ const seen=new Set(cleanArray(saved.seen,availableSet));
+ const cycles={};const last={};
+ for(const m of moods){
+  const choices=new Set(byMood.get(m.id));
+  cycles[m.id]=cleanArray(saved.cycles?.[m.id],choices);
+  if(choices.has(saved.last?.[m.id]))last[m.id]=saved.last[m.id];
+ }
+ return{seen,cycles,last};
+}
+let progress=loadProgress();
+function saveProgress(){
+ if(!saveAllowed)return;
+ try{localStorage.setItem(STORAGE_KEY,JSON.stringify({seen:[...progress.seen],cycles:progress.cycles,last:progress.last}));}
+ catch(e){saveAllowed=false;console.warn('Discovery history cannot be saved in this browser',e);}
+}
+const overallCount=document.getElementById('overall-count');
+const overallCrown=document.getElementById('overall-crown');
+const moodCount=document.getElementById('mood-count');
+const moodCrown=document.getElementById('mood-crown');
+function displayProgress(moodId=null){
+ const total=availableIds.length;
+ const found=availableIds.filter(id=>progress.seen.has(id)).length;
+ overallCount.textContent=`${found} / ${total} Passages Discovered`;
+ overallCrown.hidden=!(total>0&&found===total);
+ if(moodId){
+  const ids=byMood.get(moodId)||[];
+  const n=ids.filter(id=>progress.seen.has(id)).length;
+  const title=moods.find(m=>m.id===moodId)?.name||moodId;
+  moodCount.textContent=`${n} / ${ids.length} ${title} Passages Discovered`;
+  moodCrown.hidden=!(ids.length>0&&n===ids.length);
+ }
+}
+function randomItem(arr){
+ // Crypto randomness isn't necessary for this art exhibition; Math.random
+ // provides different orders per visitor and per completed cycle.
+ return arr[Math.floor(Math.random()*arr.length)];
+}
+function discoverNext(moodId){
+ const ids=byMood.get(moodId)||[];
+ if(!ids.length)return null;
+ let cycle=progress.cycles[moodId]||(progress.cycles[moodId]=[]);
+ // Prioritize *globally* undiscovered passages, regardless of which mood
+ // they were first tagged under. A discovery counts in every shared mood.
+ const unseen=ids.filter(id=>!progress.seen.has(id));
+ let candidates;
+ if(unseen.length){candidates=unseen;}
+ else{
+  candidates=ids.filter(id=>!cycle.includes(id));
+  if(!candidates.length){cycle=[];progress.cycles[moodId]=cycle;candidates=ids.slice();}
+ }
+ // After completing a full cycle, don't immediately repeat its last item
+ // when alternatives exist; it feels more pleasantly shuffled this way.
+ if(candidates.length>1 && progress.last[moodId]){
+  const alternatives=candidates.filter(id=>id!==progress.last[moodId]);
+  if(alternatives.length)candidates=alternatives;
+ }
+ const id=randomItem(candidates);
+ if(!cycle.includes(id))cycle.push(id);
+ progress.last[moodId]=id;
+ progress.seen.add(id);
+ saveProgress();
+ displayProgress(moodId);
+ return byId.get(id);
+}
+document.getElementById('reset-progress').addEventListener('click',()=>{
+ if(!window.confirm('Reset your discovered passages on this browser? Your writing will not be affected.'))return;
+ progress={seen:new Set(),cycles:Object.fromEntries(moods.map(m=>[m.id,[]])),last:{}};
+ saveProgress();displayProgress(active>=0?moods[active].id:null);
+});
+displayProgress();
+// Debugging convenience only — does not send data anywhere.
+window.PROSE_DISCOVERY={getSummary:()=>({found:availableIds.filter(id=>progress.seen.has(id)).length,total:availableIds.length,moods:moods.map(m=>({mood:m.name,found:(byMood.get(m.id)||[]).filter(id=>progress.seen.has(id)).length,total:(byMood.get(m.id)||[]).length}))})};
+
+window.PROSE_MOODS = moods; // Accessible in browser developer tools if you want to inspect entries.
+const scene=document.getElementById('scene'),sky=document.getElementById('sky'),skyNext=document.getElementById('sky-next'),field=document.getElementById('drift-field'),status=document.getElementById('weather-status');
+const baseCanvases=[sky,skyNext];const poke=document.getElementById('cloud-poke');
+const overlay=document.getElementById('overlay'),card=document.getElementById('passage-card');
+const heading=document.getElementById('passage-heading'),passageText=document.getElementById('passage-text'),passageMeta=document.getElementById('passage-meta');
+const another=document.getElementById('another'),close=document.getElementById('close');
+const passageCopy=document.getElementById('passage-copy'),readHint=document.getElementById('read-hint');
+const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const touch=window.matchMedia('(pointer: coarse)').matches;
+let focus=-1,active=-1,hovered=-1,selectedIndex=-1,lastFocus=null,modalOpen=false;
+let pointer={x:.5,y:.5,live:false,down:false};
+let focusAmount=0, focusCenter={x:.5,y:.5};
+let smoothPalette=[[.65,.70,.78],[.71,.72,.79],[.78,.73,.80]];
+let sceneWidth=1000,sceneHeight=700, mobile=false;
+let lastFrame=0,elapsed=0,freezeCanvas=false;
+let moodNodes=[];let wordInks=[];
+let wordStates=[];let pointerSoft={x:.5,y:.5};
+const focusCanvases=[document.getElementById('focus-sky-a'),document.getElementById('focus-sky-b')];
+let focusFront=0,lastPaintedMood=-1;
+
+const toRgb=hex=>[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255);
+const blend=(a,b,t)=>a.map((v,i)=>v*(1-t)+b[i]*t);
+const lighten=(c,t)=>blend(c,[1,1,1],t);
+const clamp=(v,min,max)=>Math.min(max,Math.max(min,v));
+const formatted=(s)=>s.charAt(0).toLowerCase()+s.slice(1);
+const palettes=moods.map(m=>m.colors.map(toRgb));
+const avgColors=palettes.map(p=>p.reduce((a,v)=>a.map((x,i)=>x+v[i]/3),[0,0,0]));
+function position(m){return mobile?m.mobile:m.xy}
+function setStatus(txt){status.textContent=txt}
+// Each selected mood is painted exactly once onto a low-res cached canvas.
+// Crossfading the two cached canvases restores the full v2 saturated pigments
+// without repeatedly redrawing dozens of cloud stamps on every animation frame.
+function showMoodWash(i){
+ if(i<0){lastPaintedMood=-1;focusCanvases.forEach(el=>el.style.opacity='0');return;}
+ if(i===lastPaintedMood)return;
+ lastPaintedMood=i;
+ const next=1-focusFront;
+ const p=wordStates[i];
+ const oldAmount=focusAmount,oldPalette=smoothPalette,oldCenter=focusCenter;
+ focusAmount=1;
+ smoothPalette=palettes[i].map(c=>c.slice());
+ focusCenter={x:clamp((p.shownX||p.x)/sceneWidth,0,1),y:clamp((p.shownY||p.y)/sceneHeight,0,1)};
+ try{focusedWeather[next].invalidate();focusedWeather[next].render(elapsed)}
+ catch(err){console.warn('Focus cloud unavailable',err);focusCanvases[next].style.display='none'}
+ focusAmount=oldAmount;smoothPalette=oldPalette;focusCenter=oldCenter;
+ focusCanvases[next].style.opacity='0';
+ void focusCanvases[next].offsetWidth;
+ focusCanvases[next].style.opacity='.96';
+ focusCanvases[focusFront].style.opacity='0';
+ focusFront=next;
+}
+function makeLabels(){
+ moods.forEach((m,i)=>{
+   const btn=document.createElement('button');btn.type='button';btn.className='mood-word '+(m.depth<.86?'depth-far':m.depth>1.17?'depth-front':'');
+   const ink=document.createElement('span');ink.className='word-inner';ink.textContent=m.name;btn.appendChild(ink);wordInks.push(ink);btn.setAttribute('aria-label',`Read a ${formatted(m.name)} passage`);
+   btn.style.setProperty('--alpha',String(.61+Math.min(m.depth,1.15)*.29));btn.style.setProperty('--blur',m.depth<.8?'.35px':'0px');btn.style.setProperty('--highlight',m.colors[1]);
+   btn.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch'){wordStates[i].held=true;previewMood(i)}});
+   btn.addEventListener('pointerleave',e=>{if(e.pointerType!=='touch'){wordStates[i].held=false;if(hovered===i)previewMood(-1)}});
+   btn.addEventListener('focus',()=>{wordStates[i].held=true;previewMood(i)});
+   btn.addEventListener('blur',()=>{wordStates[i].held=false;if(hovered===i)previewMood(-1)});
+   let touchPreviewTimer=null;
+   btn.addEventListener('pointerdown',e=>{
+     wordStates[i].held=true;
+     if(e.pointerType==='touch'){
+       touchPreviewTimer=setTimeout(()=>{if(wordStates[i].held&&!modalOpen)previewMood(i)},210);
+     }
+   });
+   const cancelTouchPreview=()=>{if(touchPreviewTimer!==null){clearTimeout(touchPreviewTimer);touchPreviewTimer=null;}};
+   btn.addEventListener('pointerup',cancelTouchPreview);
+   btn.addEventListener('pointercancel',()=>{cancelTouchPreview();wordStates[i].held=false});
+   btn.addEventListener('click',()=>openMood(i));
+   let at=position(m);btn.style.left=(at[0]*100)+'%';btn.style.top=(at[1]*100)+'%';field.append(btn);moodNodes.push(btn);const theta=Math.random()*Math.PI*2;wordStates.push({x:at[0]*sceneWidth,y:at[1]*sceneHeight,vx:Math.cos(theta),vy:Math.sin(theta),speed:13+Math.random()*8,turnSeed:Math.random()*100,repX:0,repY:0,held:false,shownX:0,shownY:0,halfWidth:60,halfHeight:36,steerTime:12+Math.random()*18});
+ });
+}
+function previewMood(i){if(modalOpen)return; hovered=i;focus=i;showMoodWash(i);
+ moodNodes.forEach((b,j)=>{b.classList.toggle('is-preview',i===j);b.classList.toggle('is-muted',i>=0&&i!==j)});
+ setStatus('Choose a mood to get a passage');
+}
+function openMood(i){
+ if(modalOpen)return;active=i;selectedIndex=-1;modalOpen=true;focus=i;lastFocus=document.activeElement;
+ heading.textContent=moods[i].name;card.style.setProperty('--modal-halo',moods[i].colors[0]+'b0');moods[i].colors.forEach((c,j)=>card.style.setProperty(['--mood-a','--mood-b','--mood-c'][j],c));
+ showNext();overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';close.focus({preventScroll:true});
+}
+function showNext(){
+ if(active<0)return;
+ const m=moods[active],item=discoverNext(m.id);
+ const text=item?item.text:'No passages have been added to this mood yet.';
+ passageText.textContent=text;passageCopy.scrollTop=0;card.scrollLeft=0;card.scrollTop=0;
+ passageCopy.classList.remove('is-short');
+ requestAnimationFrame(()=>{
+  const fits=passageCopy.scrollHeight<=passageCopy.clientHeight+8;
+  passageCopy.classList.toggle('is-short',fits);
+  readHint.hidden=fits;
+ });
+ passageText.classList.remove('change');void passageText.offsetWidth;passageText.classList.add('change');
+ const source=item?[item.source,item.year?String(item.year):null,item.year?`Written at age ${item.year-BIRTH_YEAR}`:null].filter(Boolean).join('  ·  '):'';
+ const placeholder=!item || item.id.startsWith('demo-');
+ const ids=byMood.get(m.id)||[];
+ passageMeta.textContent=placeholder?'DEMO PASSAGE':(source||'Excerpt');
+ document.querySelector('.fine-print').hidden=!placeholder;
+ another.textContent=`Another ${formatted(m.name)} passage?  ↗`;
+ another.disabled=ids.length<2;
+}
+function closeMood(){if(!modalOpen)return;modalOpen=false;overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');document.body.style.overflow='';active=-1;previewMood(-1);if(lastFocus instanceof HTMLElement)lastFocus.focus({preventScroll:true});}
+passageCopy.addEventListener('scroll',()=>{readHint.hidden=passageCopy.scrollTop+passageCopy.clientHeight>=passageCopy.scrollHeight-24;},{passive:true});
+another.addEventListener('click',showNext);close.addEventListener('click',closeMood);
+overlay.addEventListener('click',e=>{if(e.target===overlay)closeMood()});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'&&modalOpen){e.preventDefault();closeMood()}
+ if(modalOpen && e.key==='Tab'){
+  const tabStops=[close,passageCopy,another];const idx=tabStops.indexOf(document.activeElement);
+  if(e.shiftKey && idx===0){e.preventDefault();tabStops[tabStops.length-1].focus()}
+  else if(!e.shiftKey&&idx===tabStops.length-1){e.preventDefault();tabStops[0].focus()}
+ }
+});
+scene.addEventListener('pointermove',e=>{
+ const rect=scene.getBoundingClientRect();pointer.x=clamp((e.clientX-rect.left)/rect.width,0,1);pointer.y=clamp((e.clientY-rect.top)/rect.height,0,1);pointer.live=true;
+});
+scene.addEventListener('pointerleave',()=>{pointer.live=false;pointer.down=false;if(!modalOpen)previewMood(-1)});
+scene.addEventListener('pointerdown',e=>{pointer.down=true;if(e.target===scene||e.target===field)previewMood(-1)});
+window.addEventListener('pointerup',()=>{pointer.down=false;wordStates.forEach((p,i)=>{if(!moodNodes[i].matches(':hover')&&!moodNodes[i].matches(':focus'))p.held=false})});
+function updateDimensions(){
+ const r=scene.getBoundingClientRect(),oldW=sceneWidth,oldH=sceneHeight,wasMobile=mobile;
+ if(Math.abs(r.width-oldW)<1 && Math.abs(r.height-oldH)<1)return;
+ sceneWidth=r.width;sceneHeight=r.height;mobile=sceneWidth<760;
+ wordStates.forEach((p,i)=>{
+  if(wasMobile!==mobile){const at=position(moods[i]);p.x=at[0]*sceneWidth;p.y=at[1]*sceneHeight;}
+  else{p.x*=sceneWidth/oldW;p.y*=sceneHeight/oldH;}
+  p.halfWidth=moodNodes[i].offsetWidth/2+16;p.halfHeight=moodNodes[i].offsetHeight/2+25;
+  const d=moods[i].depth,scale=clamp((mobile?.87:1)*(.72+d*.29),.67,1.25);
+  wordInks[i].style.transform=`scale(${scale})`;
+ });
+ baseWeather.forEach(w=>w.resize());
+ baseFront=0;baseTransitioning=false;
+ baseCanvases.forEach((el,i)=>{el.style.transition='none';el.style.opacity=i===0?'1':'0';el.style.zIndex=i===0?'2':'1';});
+ paintBase(baseWeather[0],elapsed);
+ lastSkyUpdate=performance.now();
+ focusedWeather.forEach(w=>w.resize()); // expensive operation: RESIZE ONLY
+ if(focus>=0){lastPaintedMood=-1;showMoodWash(focus);}
+}
+// ── Procedural 2D watercolor cloud painter.
+// We deliberately use native Canvas 2D (rather than an external library or
+// GPU-only shader) so the same visual system runs on ordinary phones, laptops,
+// and browsers with WebGL disabled. Cloud sprites are generated from noise.
+function makeFallback(surface=sky){
+ const ctx=surface.getContext('2d',{alpha:true});
+ // Smaller cached watercolor sprites on phones speed up initial iOS loading.
+ const res=window.matchMedia('(max-width: 760px)').matches?170:230;
+ const smooth=(a,b,t)=>{let q=clamp((t-a)/(b-a),0,1);return q*q*(3-2*q)};
+ // Fractal, irregular cloud masks: no circles or linear fades masquerading as clouds.
+ function hash(x,y){let v=Math.sin(x*127.1+y*311.7)*43758.5453;return v-Math.floor(v)}
+ function noise(x,y){const i=Math.floor(x),j=Math.floor(y),u=x-i,v=y-j,a=u*u*(3-2*u),b=v*v*(3-2*v);return (hash(i,j)*(1-a)+hash(i+1,j)*a)*(1-b)+(hash(i,j+1)*(1-a)+hash(i+1,j+1)*a)*b}
+ function fractal(x,y){return noise(x*3,y*3)*.45+noise(x*7.2+4,y*7.2-8)*.34+noise(x*18+6,y*18-10)*.21}
+ function mask(seed){
+  const c=document.createElement('canvas');c.width=c.height=res;
+  const g=c.getContext('2d'),im=g.createImageData(res,res);
+  for(let y=0;y<res;y++)for(let x=0;x<res;x++){
+   const u=(x+.5)/res,v=(y+.5)/res,dx=u-.5,dy=v-.5,r=Math.hypot(dx,dy),a=Math.atan2(dy,dx);
+   const n=fractal(u+seed,v-seed*.7),warp=.045*Math.sin(a*7+seed*12)+.065*(n-.5);
+   const edge=.275+warp+.015*Math.sin(a*12+seed*7);
+   const core=1-smooth(edge,edge+.172,r);
+   const haze=.21*Math.exp(-r*r*18);
+   const light=.78+.28*fractal(u+.05,v-.1)+.12*(.6-v);
+   const alpha=clamp((core*.86+haze)*light,0,1)*smooth(.50,.47,Math.max(Math.abs(dx),Math.abs(dy)));
+   const k=(y*res+x)*4; im.data[k]=255;im.data[k+1]=255;im.data[k+2]=255;im.data[k+3]=Math.round(alpha*255);
+  }
+  g.putImageData(im,0,0);return c;
+ }
+ const masks=makeFallback.cachedMasks || (makeFallback.cachedMasks=[mask(.1),mask(.4),mask(.67)]);
+ function sprite(palette,seed){
+  const c=document.createElement('canvas');c.width=c.height=res;const g=c.getContext('2d');g.drawImage(masks[seed%3],0,0);
+  g.globalCompositeOperation='source-in';const grad=g.createLinearGradient(res*.12,res*.08,res*.81,res*.92);
+  grad.addColorStop(0,palette[seed%3]);grad.addColorStop(.51,palette[(seed+1)%3]);grad.addColorStop(1,palette[(seed+2)%3]);g.fillStyle=grad;g.fillRect(0,0,res,res);return c;
+ }
+ const clouds=makeFallback.cachedClouds || (makeFallback.cachedClouds=moods.map((m,i)=>[sprite(m.colors,i),sprite(m.colors,i+1),sprite(m.colors,i+2)]));
+ const mist=makeFallback.cachedMist || (makeFallback.cachedMist=sprite(['#8fa3bc','#abb3c7','#c4b0bd'],0));
+ let tinted=null,lastTint=-100;
+ const rgba=(rgb,a)=>`rgba(${rgb.map(n=>Math.round(n*255)).join(',')},${a})`;
+ function resize(){const dpr=(surface===sky||surface===skyNext)?(window.matchMedia('(max-width: 760px)').matches?.56:.67):.78,r=scene.getBoundingClientRect();surface.width=Math.round(r.width*dpr);surface.height=Math.round(r.height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}
+ function stamp(img,x,y,w,h,alpha,rot=0){ctx.globalAlpha=alpha;ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.drawImage(img,-w/2,-h/2,w,h);ctx.restore()}
+ function render(t){
+  const w=sceneWidth,h=sceneHeight,unit=Math.min(w,h),mobi=mobile;
+  ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.fillStyle='#0e1728';ctx.fillRect(0,0,w,h);
+  let foundation=ctx.createRadialGradient(w*.48,h*.47,0,w*.48,h*.47,Math.max(w,h)*.69);
+  foundation.addColorStop(0,'#354058');foundation.addColorStop(.54,'#1c2a40');foundation.addColorStop(1,'#0d1728');ctx.fillStyle=foundation;ctx.fillRect(0,0,w,h);
+  // Clouds roam WITH their words. Dense multi-size lobes + pigment veils.
+  ctx.globalCompositeOperation='source-over';
+  const densities=[.60,.56,.66,.58,.51];
+  for(let i=0;i<moods.length;i++){
+   const p=wordStates[i],d=moods[i].depth;
+   const px=w*.5+(p.x-w*.5)*.955+Math.sin(t*.089+i*2.2)*14,py=h*.5+(p.y-h*.5)*.965+Math.cos(t*.075+i*1.8)*12;
+   // A highlighted emotion is stronger while the others remain visible.
+   const gain=1-focusAmount*.76+(focus===i?focusAmount*1.13:0);
+   for(let j=0;j<(mobi?4:5);j++){
+    const a=i*2.7+j*2.399+t*(.06+.01*(j%3));
+    const ox=Math.cos(a)*unit*(j===0?.045:.07+.025*(j%3));
+    const oy=Math.sin(a*.83)*unit*(j===0?.035:.054+.015*(j%3));
+    const dx=px+ox-pointerSoft.x*w,dy=py+oy-pointerSoft.y*h,dist=Math.hypot(dx,dy);
+    const push=pointer.live&&!modalOpen?Math.exp(-dist*dist/(mobi?27000:69000))*(pointer.down?14:8):0;
+    const x=px+ox+dx/(dist+1)*push,y=py+oy+dy/(dist+1)*push;
+    const r=unit*(mobi?.535:.509)*(j===0?1.17:j===1?1.03:j===2?.88:j===3?.82:.68)*(0.88+d*.14);
+    const alpha=densities[j]*gain;
+    stamp(clouds[i][j%3],x,y,r*(j%2?1.18:1.05),r*(j%3?1.08:.92),alpha,Math.sin(a)*.12);
+   }
+  }
+  // Local three-pigment watercolor stains keep individual emotions distinct.
+  // These are laid over the mixed storm cloud, like bright pigment dropped
+  // onto damp paper. The colors remain soft, but no longer muddy together.
+  ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;
+  moods.forEach((m,i)=>{
+   const p=wordStates[i],gain=1-focusAmount*.84+(focus===i?focusAmount*.68:0);
+   for(let j=0;j<3;j++){
+    const a=i*2.4+j*2.09+t*.045;
+    const x=p.x+Math.cos(a)*unit*.070,y=p.y+Math.sin(a)*unit*.060;
+    const r=unit*.213*(j===0?1:.83);
+    const g=ctx.createRadialGradient(x,y,0,x,y,r);
+    g.addColorStop(0,rgba(palettes[i][j],(.36+(j===0?.08:0))*gain));
+    g.addColorStop(.44,rgba(palettes[i][(j+1)%3],.24*gain));
+    g.addColorStop(1,rgba(palettes[i][(j+2)%3],0));
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+   }
+  });
+  // Bloom an emotion across the sky in its *three* original watercolor tones.
+  // Blend over ~1.5s, so the selected atmosphere feels unquestionably different.
+  if(focusAmount>.001){
+   ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;
+   const backdrop=ctx.createLinearGradient(0,0,w,h);
+   backdrop.addColorStop(0,rgba(smoothPalette[0],.15*focusAmount));
+   backdrop.addColorStop(.5,rgba(smoothPalette[1],.13*focusAmount));
+   backdrop.addColorStop(1,rgba(smoothPalette[2],.18*focusAmount));ctx.fillStyle=backdrop;ctx.fillRect(0,0,w,h);
+   ctx.globalCompositeOperation='source-over';
+   if(t-lastTint>.22 || !tinted){
+    let pal=smoothPalette.map(c=>'#'+c.map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join(''));
+    tinted=[sprite(pal,0),sprite(pal,1),sprite(pal,2)];lastTint=t;
+   }
+   const fx=w*focusCenter.x,fy=h*focusCenter.y;
+   for(let j=0;j<18;j++){
+    const angle=j*2.399+t*(.047+.012*(j%4));const rad=Math.sqrt((j+.5)/18);
+    const x=fx+Math.cos(angle)*w*(mobi?.70:.47)*rad+Math.sin(t*.08+j)*12;
+    const y=fy+Math.sin(angle)*h*(mobi?.38:.47)*rad+Math.cos(t*.12+j)*9;
+    const radius=unit*(mobi?.69:.70)*(.83+.19*(j%3));
+    stamp(tinted[j%3],x,y,radius*1.2,radius*.98,(.56+.08*(j%4))*focusAmount);
+   }
+   // Wide, translucent color washes bring the whole atmosphere into focus.
+   ctx.globalAlpha=1;for(let j=0;j<12;j++){
+    let a=j*2.399+t*.035;let x=fx+Math.cos(a)*w*(.13+.065*(j%4)),y=fy+Math.sin(a)*h*(.12+.055*(j%3));
+    const r=unit*(.32+.10*(j%4));const g=ctx.createRadialGradient(x,y,0,x,y,r);
+    g.addColorStop(0,rgba(smoothPalette[j%3],.38*focusAmount));
+    g.addColorStop(.4,rgba(smoothPalette[(j+1)%3],.22*focusAmount));
+    g.addColorStop(1,rgba(smoothPalette[(j+2)%3],0));ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+   }
+  }
+  // Translucent wisps between depth layers; atmospheric, not flat.
+  ctx.globalCompositeOperation='screen';
+  for(let j=0;j<8;j++){
+   const a=j*2.4+t*.027,r=unit*(.29+(j%3)*.09);
+   const x=w*(.17+.65*((j*37%11)/11))+Math.cos(a)*20;
+   const y=h*(.22+.57*((j*19%13)/13))+Math.sin(a)*26;
+   stamp(mist,x,y,r*1.5,r,.10);
+  }
+  ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;
+  const vignette=ctx.createRadialGradient(w*.50,h*.5,unit*.12,w*.5,h*.5,Math.max(w,h)*.68);
+  vignette.addColorStop(0,'#0b142600');vignette.addColorStop(.76,'#0b142613');vignette.addColorStop(1,'#0b1426a9');
+  ctx.fillStyle=vignette;ctx.fillRect(0,0,w,h);
+  // Bake the vertical fade into image alpha ONCE. CSS masks previously
+  // forced the browser to recomposite a large masked canvas every frame.
+  ctx.globalAlpha=1;ctx.globalCompositeOperation='destination-in';
+  const fade=ctx.createLinearGradient(0,0,0,h);
+  fade.addColorStop(0,'rgba(0,0,0,0)');fade.addColorStop(.12,'rgba(0,0,0,1)');
+  fade.addColorStop(.88,'rgba(0,0,0,1)');fade.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=fade;ctx.fillRect(0,0,w,h);
+  ctx.globalCompositeOperation='source-over';
+ }
+ return{resize,render,invalidate(){tinted=null;lastTint=-100;}};
+}
+// Establish 16 usable mood buttons FIRST, even if an iOS canvas fails to paint.
+makeLabels();
+const noOpWeather={resize(){},render(){},invalidate(){}};
+let baseWeather=[noOpWeather,noOpWeather],focusedWeather=[noOpWeather,noOpWeather];
+let baseFront=0,baseTransitioning=false,lastSkyUpdate=0,skyRefreshEnabled=true,skyPaintPending=false;
+let slowFrameStreak=0,skyRefreshCounter=0;
+function paintBase(renderer,t){
+ const oldFocus=focusAmount;
+ // Resting colors remain independent from hover, so the focus layer can fade freely.
+ focusAmount=0;
+ try{renderer.invalidate();renderer.render(t)}finally{focusAmount=oldFocus}
+}
+try{
+ baseWeather=[makeFallback(sky),makeFallback(skyNext)];
+ focusedWeather=[makeFallback(focusCanvases[0]),makeFallback(focusCanvases[1])];
+}catch(err){
+ console.warn('Watercolor rendering unavailable; using static sky fallback',err);
+ baseCanvases.forEach(c=>c.style.display='none');
+ focusCanvases.forEach(c=>c.style.display='none');
+ skyRefreshEnabled=false;
+}
+function refreshSkyInIdle(){
+ skyPaintPending=false;
+ if(!skyRefreshEnabled||baseTransitioning||reduced||modalOpen||document.hidden)return;
+ baseTransitioning=true;
+ const next=1-baseFront,front=baseCanvases[baseFront],back=baseCanvases[next];
+ const before=performance.now();
+ try{paintBase(baseWeather[next],elapsed)}catch(err){console.warn('Keeping static cloud after refresh failure',err);skyRefreshEnabled=false;baseTransitioning=false;return;}
+ const paintMs=performance.now()-before;
+ // Protect slower devices. The static artwork is always a valid fallback.
+ if(paintMs>95){skyRefreshEnabled=false;baseTransitioning=false;return;}
+ back.style.transition='none';back.style.opacity='0';back.style.zIndex='2';front.style.zIndex='1';
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{
+   back.style.transition='opacity 2200ms ease-in-out';back.style.opacity='1';
+   setTimeout(()=>{
+    front.style.transition='none';front.style.opacity='0';front.style.zIndex='1';
+    baseFront=next;baseTransitioning=false;lastSkyUpdate=performance.now();skyRefreshCounter++;
+   },2250);
+ }));
+}
+function queueSkyRefresh(now){
+ if(reduced||!skyRefreshEnabled||baseTransitioning||skyPaintPending||modalOpen||document.hidden)return;
+ // The resting atmosphere renews around every 3 seconds on desktop and
+ // around every 4.5 seconds on mobile to protect battery and interaction speed.
+ if(now-lastSkyUpdate<(mobile?4600:3300))return;
+ skyPaintPending=true;
+ if('requestIdleCallback' in window){window.requestIdleCallback(refreshSkyInIdle,{timeout:1250})}
+ else{setTimeout(refreshSkyInIdle,75)}
+}
+function pokeCloud(e){
+ if(reduced||modalOpen)return;
+ const r=scene.getBoundingClientRect();
+ poke.style.left=(100*clamp((e.clientX-r.left)/r.width,0,1))+'%';
+ poke.style.top=(100*clamp((e.clientY-r.top)/r.height,0,1))+'%';
+ poke.classList.remove('poked');void poke.offsetWidth;poke.classList.add('poked');
+}
+scene.addEventListener('pointerdown',pokeCloud);
+function tick(time){
+ const dt=Math.min(55,time-(lastFrame||time));lastFrame=time;
+ // If a device can't hold a reasonable frame rate, stop background refreshes
+ // automatically while preserving the smoothly moving words.
+ if(dt>34){slowFrameStreak+=1}else{slowFrameStreak=Math.max(0,slowFrameStreak-2)}
+ if(slowFrameStreak>45)skyRefreshEnabled=false;
+ if(!reduced && (Math.floor(time/200)%2===0))queueSkyRefresh(time);
+ const ds=reduced?0:dt/1000;if(!reduced)elapsed+=ds;
+ const ease=(ms)=>1-Math.exp(-dt/ms);
+ pointerSoft.x+=(pointer.x-pointerSoft.x)*ease(350);
+ pointerSoft.y+=(pointer.y-pointerSoft.y)*ease(350);
+ const desired=focus>=0?1:0;
+ focusAmount+=(desired-focusAmount)*ease(590);
+ // Note: the cached canvas is never redrawn here. Only small text layers move.
+ wordStates.forEach((p,i)=>{
+  const node=moodNodes[i],m=moods[i],d=m.depth;
+  const hold=p.held||hovered===i||node.matches(':hover');
+  if(!hold){
+   if(!reduced){
+    const turn=.075*Math.sin(elapsed*.19+p.turnSeed)+.018*Math.sin(elapsed*.51+i);
+    const cs=Math.cos(turn*ds),sn=Math.sin(turn*ds),vx=p.vx,vy=p.vy;
+    p.vx=vx*cs-vy*sn;p.vy=vx*sn+vy*cs;
+    const speed=p.speed*(mobile?.68:1);
+    p.x+=p.vx*speed*ds;p.y+=p.vy*speed*ds;
+    const bx=Math.max(p.halfWidth,sceneWidth*.055),by=Math.max(p.halfHeight,sceneHeight*.09);
+    if(p.x<bx){p.x=bx;p.vx=Math.abs(p.vx)}
+    if(p.x>sceneWidth-bx){p.x=sceneWidth-bx;p.vx=-Math.abs(p.vx)}
+    if(p.y<by){p.y=by;p.vy=Math.abs(p.vy)}
+    if(p.y>sceneHeight-by){p.y=sceneHeight-by;p.vy=-Math.abs(p.vy)}
+   }
+   let rx=0,ry=0;
+   if(pointer.live&&!modalOpen&&!reduced){
+    const dx=p.x-pointerSoft.x*sceneWidth,dy=p.y-pointerSoft.y*sceneHeight,dist=Math.hypot(dx,dy);
+    const influence=Math.exp(-dist*dist/(mobile?12500:24500));
+    const force=influence*(pointer.down?32:22)*d;
+    rx=dx/(dist+1)*force;ry=dy/(dist+1)*force;
+   }
+   const maxStep=dt*.032,alpha=ease(470);
+   p.repX+=clamp((rx-p.repX)*alpha,-maxStep,maxStep);
+   p.repY+=clamp((ry-p.repY)*alpha,-maxStep,maxStep);
+   const parallaxX=pointer.live?(pointerSoft.x-.5)*7*(d-.45):0;
+   const parallaxY=pointer.live?(pointerSoft.y-.5)*5*(d-.45):0;
+   p.shownX=p.x+p.repX+parallaxX;p.shownY=p.y+p.repY+parallaxY;
+  }
+  // A hovered / pressed / keyboard-focused word is literally motionless.
+  // Position changes use compositor transforms, not layout-triggering left/top.
+  node.style.transform=`translate3d(${p.shownX.toFixed(2)}px,${p.shownY.toFixed(2)}px,0) translate(-50%,-50%)`;
+ });
+ requestAnimationFrame(tick);
+}
+updateDimensions();
+const bootNote=document.getElementById('cloud-boot-note');
+if(bootNote)bootNote.remove();
+window.addEventListener('resize',updateDimensions,{passive:true});
+document.addEventListener('visibilitychange',()=>{lastFrame=0;lastSkyUpdate=performance.now();});
+setStatus('Choose a mood to get a passage');
+requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
